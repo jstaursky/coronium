@@ -1,0 +1,25 @@
+target_sources(
+  slgh-compile
+  PRIVATE
+    address.cc
+    float.cc
+    globalcontext.cc
+    opcodes.cc
+    pcoderaw.cc
+    space.cc
+    translate.cc
+    xml.cc
+    context.cc
+    filemanage.cc
+    pcodecompile.cc
+    pcodeparse.cc
+    semantics.cc
+    sleigh.cc
+    sleighbase.cc
+    slghpatexpress.cc
+    slghpattern.cc
+    slghsymbol.cc
+    slgh_compile.cc
+    slghparse.cc
+    slghscan.cc
+)
