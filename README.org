@@ -1,7 +1,7 @@
 # coronium
 
 #+begin_quote
-coronium: a hypothetical chemical element thought to have been detected in the
+*coronium*: a hypothetical chemical element thought to have been detected in the
 solar corona whose spectrum showed a number of lines later identified as
 belonging to iron, nickel, and other elements highly ionized at the extreme
 solar temperatures.
