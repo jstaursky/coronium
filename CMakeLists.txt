@@ -32,7 +32,7 @@ flex_target(
 add_flex_bison_dependency(slgh-scan slgh-parse)
 
 add_executable(slgh-compile "") # sources will be added through add_subdirectory(..)
-add_library(sla SHARED "")
+add_library(cronm SHARED "")
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
@@ -51,12 +51,13 @@ install(
 # LIBSLA.so
 install(
   TARGETS
-  sla
+  cronm
   DESTINATION
   lib
 )
 
 # CORONIUM HEADER FILES
+# TODO need to fix depends on error.hh
 install(
   FILES
   ${CMAKE_SOURCE_DIR}/include/coronium/address.hh

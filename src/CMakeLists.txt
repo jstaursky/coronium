@@ -25,7 +25,7 @@ target_sources(
 )
 
 target_sources(
-  sla
+  cronm
   PRIVATE
     address.cc
     float.cc
