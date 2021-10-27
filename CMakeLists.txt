@@ -31,12 +31,11 @@ flex_target(
 )
 add_flex_bison_dependency(slgh-scan slgh-parse)
 
-
-add_executable(slgh-compile "") # sources will be added in add_subdirectory(..)
+add_executable(slgh-compile "") # sources will be added through add_subdirectory(..)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
 target_include_directories(
   slgh-compile
   PRIVATE
-  ${CMAKE_SOURCE_DIR}/include
+  ${CMAKE_SOURCE_DIR}/include/coronium
 )
