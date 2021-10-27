@@ -32,10 +32,53 @@ flex_target(
 add_flex_bison_dependency(slgh-scan slgh-parse)
 
 add_executable(slgh-compile "") # sources will be added through add_subdirectory(..)
+add_library(sla SHARED "")
+
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
-target_include_directories(
-  slgh-compile
-  PRIVATE
+include_directories(
   ${CMAKE_SOURCE_DIR}/include/coronium
+)
+
+# SLEIGH COMPILER
+install(
+  TARGETS
+  slgh-compile
+  DESTINATION
+  bin
+)
+
+# LIBSLA.so
+install(
+  TARGETS
+  sla
+  DESTINATION
+  lib
+)
+
+# CORONIUM HEADER FILES
+install(
+  FILES
+  ${CMAKE_SOURCE_DIR}/include/coronium/address.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/float.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/globalcontext.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/opcodes.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/pcoderaw.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/space.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/translate.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/context.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/filemanage.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/pcodecompile.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/semantics.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/sleigh.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/sleighbase.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/slghpatexpress.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/slghpattern.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/slghsymbol.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/loadimage.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/emulate.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/memstate.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/opbehavior.hh
+  DESTINATION
+  include/coronium
 )

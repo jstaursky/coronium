@@ -23,3 +23,28 @@ target_sources(
     slghparse.cc
     slghscan.cc
 )
+
+target_sources(
+  sla
+  PRIVATE
+    address.cc
+    float.cc
+    globalcontext.cc
+    opcodes.cc
+    pcoderaw.cc
+    space.cc
+    translate.cc
+    context.cc
+    filemanage.cc
+    pcodecompile.cc
+    semantics.cc
+    sleigh.cc
+    sleighbase.cc
+    slghpatexpress.cc
+    slghpattern.cc
+    slghsymbol.cc
+    loadimage.cc
+    emulate.cc
+    memstate.cc
+    opbehavior.cc
+)
