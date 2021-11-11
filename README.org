@@ -15,6 +15,7 @@ Coronium will install =slgh-compile= (i.e., the sleigh compiler) as well as the 
   cd build
   cmake ..
   make -j$(nproc)
+  make cpus                       # build .sla files.
   sudo make install
   sudo ldconfig
 #+end_src

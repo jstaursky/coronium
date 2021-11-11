@@ -48,7 +48,7 @@ install(
   bin
 )
 
-# LIBSLA.so
+# libcoronium.so
 install(
   TARGETS
   coronium
@@ -57,7 +57,6 @@ install(
 )
 
 # CORONIUM HEADER FILES
-# TODO need to fix depends on error.hh
 install(
   FILES
   ${CMAKE_SOURCE_DIR}/include/coronium/address.hh
@@ -86,4 +85,15 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/xml.hh
   DESTINATION
   include/coronium
+)
+
+
+# BUILD CPU SPEC FILES
+file(COPY ${CMAKE_SOURCE_DIR}/processors DESTINATION ${CMAKE_BINARY_DIR}/)
+
+add_custom_target(cpus
+    COMMAND slgh-compile -a processors
+    COMMENT "testing add_custom_target 'bar'..."
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    DEPENDS slgh-compile
 )
