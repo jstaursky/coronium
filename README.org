@@ -1,4 +1,4 @@
-# coronium
+* coronium
 
 #+begin_quote
 *coronium*: a hypothetical chemical element thought to have been detected in the
@@ -6,3 +6,27 @@ solar corona whose spectrum showed a number of lines later identified as
 belonging to iron, nickel, and other elements highly ionized at the extreme
 solar temperatures.
 #+end_quote
+
+** Install
+Coronium will install =slgh-compile= (i.e., the sleigh compiler) as well as the =coronium= header files and =libcoronium.so=
+
+#+begin_src shell
+  mkdir build
+  cd build
+  cmake ..
+  make -j$(nproc)
+  sudo make install
+  sudo ldconfig
+#+end_src
+
+After install you can link to targets with headers such as
+#+begin_src c++
+  /* main.cpp */
+  #include <coronium/types.h>
+  #include <coronium/loadimage.hh>
+  #include <coronium/sleigh.hh>
+  #include <coronium/emulate.hh>
+  /* ... */  
+#+end_src
+
+via the cmdline -- =g++ main.cpp -lcoronium -o main=
