@@ -6,14 +6,20 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
 # generate pcodeparse.cc
-add_custom_target(pcodeparse echo "Creating pcodeparse.cc" DEPENDS ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc)
+add_custom_target(
+  pcodeparse
+  echo "Creating pcodeparse.cc"
+  DEPENDS ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc)
 add_custom_command(
   OUTPUT ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
   COMMAND ${BISON_EXECUTABLE}
   ARGS -y ${CMAKE_SOURCE_DIR}/parse/pcodeparse.y -p pcode -o ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
 )
 # generate xml.cc
-add_custom_target(xml echo "Creating xml.cc" DEPENDS ${CMAKE_SOURCE_DIR}/src/xml.cc)
+add_custom_target(
+  xml
+  echo "Creating xml.cc"
+  DEPENDS ${CMAKE_SOURCE_DIR}/src/xml.cc)
 add_custom_command(
   OUTPUT ${CMAKE_SOURCE_DIR}/src/xml.cc
   COMMAND ${BISON_EXECUTABLE}
@@ -88,7 +94,6 @@ install(
 
 # BUILD CPU SPEC FILES
 file(COPY ${CMAKE_SOURCE_DIR}/processors DESTINATION ${CMAKE_BINARY_DIR}/)
-
 add_custom_target(
   cpus
   COMMAND slgh-compile -a processors
@@ -96,3 +101,13 @@ add_custom_target(
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   DEPENDS slgh-compile
 )
+# Same effect as commented out portion above, but has the benefit of printing
+# out a msg at the end.
+add_custom_command(
+  TARGET cpus POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+  ${CMAKE_BINARY_DIR}/processors
+  "/var/coronium/cpus"
+  COMMENT "CPU specification folders are installed in /var/coronium/cpus"
+)
+
