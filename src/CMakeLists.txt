@@ -25,26 +25,27 @@ target_sources(
 )
 
 target_sources(
-  cronm
+  coronium
   PRIVATE
     address.cc
+    context.cc
+    emulate.cc
+    filemanage.cc
     float.cc
     globalcontext.cc
+    loadimage.cc
+    memstate.cc
+    opbehavior.cc
     opcodes.cc
-    pcoderaw.cc
-    space.cc
-    translate.cc
-    context.cc
-    filemanage.cc
     pcodecompile.cc
+    pcoderaw.cc
     semantics.cc
-    sleigh.cc
     sleighbase.cc
+    sleigh.cc
     slghpatexpress.cc
     slghpattern.cc
     slghsymbol.cc
-    loadimage.cc
-    emulate.cc
-    memstate.cc
-    opbehavior.cc
+    space.cc
+    translate.cc
+    xml.cc
 )
