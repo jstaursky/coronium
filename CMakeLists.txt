@@ -36,9 +36,7 @@ add_library(coronium SHARED "")
 
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
-include_directories(
-  ${CMAKE_SOURCE_DIR}/include/coronium
-)
+include_directories(${CMAKE_SOURCE_DIR}/include/coronium)
 
 # SLEIGH COMPILER
 install(
@@ -91,9 +89,10 @@ install(
 # BUILD CPU SPEC FILES
 file(COPY ${CMAKE_SOURCE_DIR}/processors DESTINATION ${CMAKE_BINARY_DIR}/)
 
-add_custom_target(cpus
-    COMMAND slgh-compile -a processors
-    COMMENT "testing add_custom_target 'bar'..."
-    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-    DEPENDS slgh-compile
+add_custom_target(
+  cpus
+  COMMAND slgh-compile -a processors
+  COMMENT "BUILDING .sla CPU SPECIFICATION FILES"
+  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  DEPENDS slgh-compile
 )
