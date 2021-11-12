@@ -7,6 +7,9 @@ belonging to iron, nickel, and other elements highly ionized at the extreme
 solar temperatures.
 #+end_quote
 
+Coronium is the ghidra disassembler + decompiler in library form. Made suitable for use in c++ projects.
+Usage is as easy as =g++ <your-code>.cpp $(pkg-config --cflags --libs coronium) -o output>=.
+
 ** Install
 Coronium will install =slgh-compile= (i.e., the sleigh compiler) as well as the
 =coronium= header files and =libcoronium.so=. cpu specification files (=.sla=
