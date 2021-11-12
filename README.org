@@ -25,6 +25,7 @@ files) will be installed in =/var/coronium/cpus=.
 After install you can link to targets with headers such as
 #+begin_src c++
   /* main.cpp */
+  #include <coronium/coronium.hpp>
   #include <coronium/types.h>
   #include <coronium/loadimage.hh>
   #include <coronium/sleigh.hh>
