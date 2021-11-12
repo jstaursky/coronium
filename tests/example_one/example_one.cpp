@@ -17,6 +17,7 @@
 // Dump the raw pcode instructions
 
 // Root include for parsing using SLEIGH
+#include <coronium/coronium.hpp>
 #include <coronium/types.h>
 #include <coronium/loadimage.hh>
 #include <coronium/sleigh.hh>
@@ -305,7 +306,7 @@ int main(int argc,char **argv)
   ContextInternal context;
 
   // Set up the assembler/pcode-translator
-  string sleighfilename = "/var/coronium/cpus/x86/specfiles/x86.sla";
+  string sleighfilename = SLA_LOCATION(x86);
   Sleigh trans(&loader,&context);
 
   // Read sleigh file into DOM

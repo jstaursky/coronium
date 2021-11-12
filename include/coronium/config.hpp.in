@@ -1,0 +1,6 @@
+#ifndef _CORONIUM_HPP_
+#define _CORONIUM_HPP_
+
+#cmakedefine SLA_LOCATION(cpu) (@SLA_LOCATION@ #cpu "/specfiles/" #cpu ".sla")
+
+#endif

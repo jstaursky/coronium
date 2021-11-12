@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.13)
 
 project(coronium CXX)
 
+
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
 set(VERSION_PATCH 0)
@@ -96,6 +97,10 @@ install(
   DESTINATION
   include/coronium
 )
+# Create the convenience header "coronium.hpp" which defines the macro SLA_LOCATION(cpu)
+set(SLA_LOCATION \"/var/coronium/cpus/\")
+configure_file(${CMAKE_SOURCE_DIR}/include/coronium/config.hpp.in ${CMAKE_BINARY_DIR}/coronium.hpp)
+install (FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
 
 
 # BUILD CPU SPEC FILES
@@ -134,3 +139,4 @@ install(
   DESTINATION
   "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
+
