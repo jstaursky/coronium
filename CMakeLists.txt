@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 3.13)
 
 project(coronium CXX)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+set(VERSION_MAJOR 0)
+set(VERSION_MINOR 1)
+set(VERSION_PATCH 0)
+set_property(GLOBAL PROPERTY VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
@@ -9,7 +13,8 @@ find_package(FLEX REQUIRED)
 add_custom_target(
   pcodeparse
   echo "Creating pcodeparse.cc"
-  DEPENDS ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc)
+  DEPENDS ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
+)
 add_custom_command(
   OUTPUT ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
   COMMAND ${BISON_EXECUTABLE}
@@ -19,7 +24,8 @@ add_custom_command(
 add_custom_target(
   xml
   echo "Creating xml.cc"
-  DEPENDS ${CMAKE_SOURCE_DIR}/src/xml.cc)
+  DEPENDS ${CMAKE_SOURCE_DIR}/src/xml.cc
+)
 add_custom_command(
   OUTPUT ${CMAKE_SOURCE_DIR}/src/xml.cc
   COMMAND ${BISON_EXECUTABLE}
@@ -111,3 +117,20 @@ add_custom_command(
   COMMENT "CPU specification folders are installed in /var/coronium/cpus"
 )
 
+# Support for pkg-config
+configure_file(coronium.pc.in ${CMAKE_BINARY_DIR}/coronium.pc @ONLY)
+set(pkgconfig_prefix ${CMAKE_INSTALL_PREFIX})
+set(pkgconfig_exec_prefix ${CMAKE_INSTALL_PREFIX})
+set(pkgconfig_libdir ${CMAKE_INSTALL_PREFIX}/${CMAKE_INSTALL_LIBDIR})
+set(pkgconfig_version ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH})
+
+if(NOT CMAKE_INSTALL_LIBDIR)
+  set(CMAKE_INSTALL_LIBDIR lib)
+endif()
+
+install(
+  FILES
+  "${CMAKE_BINARY_DIR}/coronium.pc"
+  DESTINATION
+  "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
+)
