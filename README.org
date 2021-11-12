@@ -9,6 +9,7 @@ solar temperatures.
 
 ** Install
 Coronium will install =slgh-compile= (i.e., the sleigh compiler) as well as the =coronium= header files and =libcoronium.so=
+=.sla= files will be installed in =/var/coronium/cpus=
 
 #+begin_src shell
   mkdir build
