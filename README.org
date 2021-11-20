@@ -13,12 +13,12 @@ Usage is as easy as =g++ <your-code>.cpp $(pkg-config --cflags --libs coronium) 
 ** Install
 Coronium will install =slgh-compile= (i.e., the sleigh compiler) as well as the
 =coronium= header files and =libcoronium.so=. cpu specification files (=.sla=
-files) will be installed in =/var/coronium/cpus=.
+files) will be installed in =/var/coronium/cpus= (default location).
 
 #+begin_src shell
   mkdir build
   cd build
-  cmake ..
+  cmake ..                             # (alt.) cmake .. -DSLA_LOCATION=<your-directory>
   make -j$(nproc)
   sudo make cpus                       # build and install .sla files.
   sudo make install                    # install headers + lib.

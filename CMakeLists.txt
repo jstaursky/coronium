@@ -2,6 +2,14 @@ cmake_minimum_required(VERSION 3.13)
 
 project(coronium CXX)
 
+#                 ### COMMAND-LINE OPTIONS FOR CMAKE BUILD ###
+#
+#    cmake .. -DSLA_LOCATION=<your-directory>
+set(SLA_LOCATION "/var/coronium/cpus/" CACHE STRING "Where to install .sla files.")
+
+# Create the convenience header "coronium.hpp" which defines the macro SLA_LOCATION(cpu)
+configure_file(${CMAKE_SOURCE_DIR}/include/coronium/config.hpp.in ${CMAKE_BINARY_DIR}/coronium.hpp)
+install (FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
 
 set(VERSION_MAJOR 0)
 set(VERSION_MINOR 1)
@@ -97,10 +105,6 @@ install(
   DESTINATION
   include/coronium
 )
-# Create the convenience header "coronium.hpp" which defines the macro SLA_LOCATION(cpu)
-set(SLA_LOCATION \"/var/coronium/cpus/\")
-configure_file(${CMAKE_SOURCE_DIR}/include/coronium/config.hpp.in ${CMAKE_BINARY_DIR}/coronium.hpp)
-install (FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
 
 
 # BUILD CPU SPEC FILES
@@ -112,14 +116,12 @@ add_custom_target(
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   DEPENDS slgh-compile
 )
-# Same effect as commented out portion above, but has the benefit of printing
-# out a msg at the end.
 add_custom_command(
   TARGET cpus POST_BUILD
   COMMAND ${CMAKE_COMMAND} -E copy_directory
   ${CMAKE_BINARY_DIR}/processors
-  "/var/coronium/cpus"
-  COMMENT "CPU specification folders are installed in /var/coronium/cpus"
+  ${SLA_LOCATION}
+  COMMENT "CPU specification folders are installed in ${SLA_LOCATION}"
 )
 
 # Support for pkg-config
