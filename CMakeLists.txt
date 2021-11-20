@@ -142,3 +142,6 @@ install(
   "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
 )
 
+MESSAGE(STATUS "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+MESSAGE(STATUS ".sla files will be installed in: " ${SLA_LOCATION})
+MESSAGE(STATUS "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% INFO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
