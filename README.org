@@ -28,9 +28,9 @@ install).
 
 However, if you decide to change/move the cpu directory, just be sure to set the
 environment variable =SLA_DIR= to this new location. That way the macro
-=SLA_LOCATION(cpu)= will still be able to find this location and return
-=std::string=. The environment variable =SLA_DIR= is given precedence over
-whatever path was decided during the initial install.
+=SLA_LOCATION()= will still be able to find cpu definitions. The environment
+variable =SLA_DIR= is given precedence over whatever path was decided during the
+initial install.
 
 After install you can link to targets with headers such as
 #+begin_src c++
