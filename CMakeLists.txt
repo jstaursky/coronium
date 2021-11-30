@@ -5,7 +5,7 @@ project(coronium CXX)
 #                 ### COMMAND-LINE OPTIONS FOR CMAKE BUILD ###
 #
 #    cmake .. -DSLA_LOCATION=<your-directory>
-set(SLA_LOCATION "/var/coronium/cpus/" CACHE STRING "Where to install .sla files.")
+set(SLA_LOCATION "/var/coronium/" CACHE STRING "Where to install .sla files.")
 
 # Create the convenience header "coronium.hpp" which defines the macro SLA_LOCATION(cpu)
 configure_file(${CMAKE_SOURCE_DIR}/include/coronium/config.hpp.in ${CMAKE_BINARY_DIR}/coronium.hpp)

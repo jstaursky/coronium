@@ -1,6 +1,17 @@
 #ifndef _CORONIUM_HPP_
 #define _CORONIUM_HPP_
 
-#cmakedefine SLA_LOCATION(cpu) (@SLA_LOCATION@ #cpu "/specfiles/" #cpu ".sla")
+#include <stdlib.h>             // getenv
+#include <string>
+
+// NOTE DO NOT try and return a char const* instead of std::string. Doing so returns null.
+#cmakedefine SLA_LOCATION(cpu) []() -> std::string {                                   \
+    char const* env = getenv("SLA_DIR");                                               \
+    auto sla_dir = std::string(env ? env : "");                                        \
+    auto suffix = std::string(#cpu "/specfiles/" #cpu ".sla");                         \
+    auto ret = sla_dir.empty() ? (std::string("@SLA_LOCATION@") + std::string(suffix)) \
+    : sla_dir + "/" + suffix;                                                          \
+    return ret;                                                                        \
+}()
 
 #endif
