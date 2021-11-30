@@ -7,8 +7,12 @@ belonging to iron, nickel, and other elements highly ionized at the extreme
 solar temperatures.
 #+end_quote
 
-Coronium is the ghidra disassembler + decompiler in library form. Made suitable for use in c++ projects.
-Usage is as easy as =g++ <your-code>.cpp $(pkg-config --cflags --libs coronium) -o output>=.
+Coronium is the ghidra disassembler + decompiler in library form. Made suitable
+for use in c++ projects. Usage is as easy as =g++ <your-code>.cpp $(pkg-config
+--cflags --libs coronium) -o output>=. None of the Ghidra source code for the
+decompiler has been modified. This project simply enables installation as a
+library and defines a convenience header =coronium.hpp= that holds helper
+function(s) to simplify interacting with the ghidra library code.
 
 ** Install
 #+begin_src shell
@@ -35,7 +39,7 @@ initial install.
 *** NOTE
     when specifying =SLA_DIR=, do not end the path with "/" for example, do
 @@html:<pre>@@export SLA_DIR="​/var​/blah"@@html:</pre>@@ rather than
-@@html:<pre>@@export SLA_DIR="​/var/blah​/"@@html:</pre>@@).
+@@html:<pre>@@export SLA_DIR="​/var/blah​/"@@html:</pre>@@.
 
 After install you can link to targets with headers such as
 #+begin_src c++
