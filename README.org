@@ -30,9 +30,12 @@ However, if you decide to change/move the cpu directory, just be sure to set the
 environment variable =SLA_DIR= to this new location. That way the macro
 =SLA_LOCATION()= will still be able to find cpu definitions. The environment
 variable =SLA_DIR= is given precedence over whatever path was decided during the
-initial install. (NOTE: when specifying =SLA_DIR=, do not end the path with "/"
-for example, do @@html:<pre>@@export SLA_DIR="​/var​/blah"@@html:</pre>@@ rather
-than @@html:<pre>@@export SLA_DIR="​/var/blah​/"@@html:</pre>@@).
+initial install.
+
+*** NOTE
+    when specifying =SLA_DIR=, do not end the path with "/" for example, do
+@@html:<pre>@@export SLA_DIR="​/var​/blah"@@html:</pre>@@ rather than
+@@html:<pre>@@export SLA_DIR="​/var/blah​/"@@html:</pre>@@).
 
 After install you can link to targets with headers such as
 #+begin_src c++
