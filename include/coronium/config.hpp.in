@@ -1,8 +1,40 @@
 #ifndef _CORONIUM_HPP_
 #define _CORONIUM_HPP_
 
+#include <dirent.h>             // DIR
+#include <libgen.h>             // dirname
+
 #include <stdlib.h>             // getenv
 #include <string>
+#include <vector>
+
+// TODO use for searching and collecting all .sla file locations when given a
+// directory s.
+void search_directory (std::string s, std::vector<std::string>& files)
+{
+    DIR* dir = opendir (s.c_str());
+    struct dirent* dp;
+    std::string path;
+
+    if (!dir)
+        return;
+
+    while (dp = readdir (dir), dp != nullptr)
+    {
+        auto entry = std::string (dp->d_name);
+
+        if (entry == "." || entry == "..")
+            continue;
+
+        path = (s + "/" + entry);
+
+        if (entry != "." && entry != ".." && (entry.find (".sla") != std::string::npos))
+            files.push_back (path);
+
+        search_directory (path, files);
+    }
+    closedir (dir);
+}
 
 // NOTE DO NOT try and return a char const* instead of std::string. Doing so returns null.
 #cmakedefine SLA_LOCATION(cpu) []() -> std::string {                                   \
