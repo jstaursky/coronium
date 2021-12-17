@@ -36,6 +36,12 @@ environment variable =SLA_DIR= to this new location. That way the macro
 variable =SLA_DIR= is given precedence over whatever path was decided during the
 initial install.
 
+*update* .sla files are now searched for recursively inside whatever folder
+SLA_DIR points to (or wherever you specified at compile time). That is, the
+subfolder hierarchy no longer matters, you could point SLA_DIR to whichever top
+level folder ghidra stores its .sla files to and SLA_LOCATION will be able to
+search and find the correct .sla file.
+
 After install you can link to targets with headers such as
 #+begin_src c++
   /* main.cpp */

@@ -8,11 +8,9 @@
 #include <string>
 #include <vector>
 
-// TODO use for searching and collecting all .sla file locations when given a
-// directory s.
-void search_directory (std::string s, std::vector<std::string>& files)
+void search_directory (std::string dirname, std::vector<std::string>& files)
 {
-    DIR* dir = opendir (s.c_str());
+    DIR* dir = opendir (dirname.c_str());
     struct dirent* dp;
     std::string path;
 
@@ -26,7 +24,7 @@ void search_directory (std::string s, std::vector<std::string>& files)
         if (entry == "." || entry == "..")
             continue;
 
-        path = (s + "/" + entry);
+        path = (dirname + "/" + entry);
 
         if (entry != "." && entry != ".." && (entry.find (".sla") != std::string::npos))
             files.push_back (path);
@@ -36,14 +34,25 @@ void search_directory (std::string s, std::vector<std::string>& files)
     closedir (dir);
 }
 
+std::string find_slafile (std::string s, std::string dir = "@SLA_LOCATION@")
+{
+    std::vector<std::string> sla_list;
+
+    search_directory (dir, sla_list);
+    for (auto& i : sla_list)
+        if (i.find(s) != std::string::npos)
+            return std::string(i);
+    return "";
+}
+
 // NOTE DO NOT try and return a char const* instead of std::string. Doing so returns null.
-#cmakedefine SLA_LOCATION(cpu) []() -> std::string {                                   \
-    char const* env = getenv("SLA_DIR");                                               \
-    auto sla_dir = std::string(env ? env : "");                                        \
-    auto suffix = std::string(#cpu "/specfiles/" #cpu ".sla");                         \
-    auto ret = sla_dir.empty() ? (std::string("@SLA_LOCATION@") + std::string(suffix)) \
-    : sla_dir + "/" + suffix;                                                          \
-    return ret;                                                                        \
+#cmakedefine SLA_LOCATION(cpu) []() -> std::string {              \
+    char const* env       = getenv("SLA_DIR");                    \
+    auto        sla_envir = std::string(env ? env : "");          \
+    auto        sla       = #cpu + std::string(".sla");           \
+    auto        ret       = sla_envir.empty() ? find_slafile(sla) \
+    : find_slafile(sla, sla_envir);                               \
+    return ret;                                                   \
 }()
 
 #endif
