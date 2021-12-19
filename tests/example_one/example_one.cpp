@@ -306,7 +306,7 @@ int main(int argc,char **argv)
   ContextInternal context;
 
   // Set up the assembler/pcode-translator
-  string sleighfilename = SLA_LOCATION(x86);
+  string sleighfilename = SLA_LOCATION("x86");
   Sleigh trans(&loader,&context);
 
   // Read sleigh file into DOM

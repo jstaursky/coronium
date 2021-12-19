@@ -10,7 +10,7 @@
 
 void search_directory (std::string dirname, std::vector<std::string>& files)
 {
-    DIR* dir = opendir (dirname.c_str());
+    DIR* dir = opendir (dirname.c_str ());
     struct dirent* dp;
     std::string path;
 
@@ -26,7 +26,8 @@ void search_directory (std::string dirname, std::vector<std::string>& files)
 
         path = (dirname + "/" + entry);
 
-        if (entry != "." && entry != ".." && (entry.find (".sla") != std::string::npos))
+        if (entry.rfind (".sla") != std::string::npos &&
+            entry.rfind (".sla") == (entry.length () - std::string(".sla").length ()))
             files.push_back (path);
 
         search_directory (path, files);
@@ -45,14 +46,14 @@ std::string find_slafile (std::string s, std::string dir = "@SLA_LOCATION@")
     return "";
 }
 
-// NOTE DO NOT try and return a char const* instead of std::string. Doing so returns null.
-#cmakedefine SLA_LOCATION(cpu) []() -> std::string {              \
-    char const* env       = getenv("SLA_DIR");                    \
-    auto        sla_envir = std::string(env ? env : "");          \
-    auto        sla       = #cpu + std::string(".sla");           \
-    auto        ret       = sla_envir.empty() ? find_slafile(sla) \
-    : find_slafile(sla, sla_envir);                               \
-    return ret;                                                   \
-}()
+std::string SLA_LOCATION(std::string cpu)
+{
+    char const* env = getenv("SLA_DIR");
+    auto        sla_envir = std::string(env ? env : "");
+    auto        sla       = cpu + std::string(".sla");
+    auto        ret       = sla_envir.empty() ? find_slafile(sla)
+    : find_slafile(sla, sla_envir);
+    return ret;
+}
 
 #endif
