@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -58,8 +58,8 @@ extern int yydebug;
 /* Token type.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
-enum yytokentype
-{
+  enum yytokentype
+  {
     OP_BOOL_OR = 258,
     OP_BOOL_AND = 259,
     OP_BOOL_XOR = 260,
@@ -171,56 +171,57 @@ enum yytokentype
     MACROSYM = 366,
     LABELSYM = 367,
     SUBTABLESYM = 368
-};
+  };
 #endif
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 
-union YYSTYPE {
+union YYSTYPE
+{
 #line 29 "src/decompile/cpp/slghparse.y" /* yacc.c:1909  */
 
-    char ch;
-    uintb* i;
-    intb* big;
-    string* str;
-    vector<string>* strlist;
-    vector<intb>* biglist;
-    vector<ExprTree*>* param;
-    SpaceQuality* spacequal;
-    FieldQuality* fieldqual;
-    StarQuality* starqual;
-    VarnodeTpl* varnode;
-    ExprTree* tree;
-    vector<OpTpl*>* stmt;
-    ConstructTpl* sem;
-    SectionVector* sectionstart;
-    Constructor* construct;
-    PatternEquation* pateq;
-    PatternExpression* patexp;
+  char ch;
+  uintb *i;
+  intb *big;
+  string *str;
+  vector<string> *strlist;
+  vector<intb> *biglist;
+  vector<ExprTree *> *param;
+  SpaceQuality *spacequal;
+  FieldQuality *fieldqual;
+  StarQuality *starqual;
+  VarnodeTpl *varnode;
+  ExprTree *tree;
+  vector<OpTpl *> *stmt;
+  ConstructTpl *sem;
+  SectionVector *sectionstart;
+  Constructor *construct;
+  PatternEquation *pateq;
+  PatternExpression *patexp;
 
-    vector<SleighSymbol*>* symlist;
-    vector<ContextChange*>* contop;
-    SleighSymbol* anysym;
-    SpaceSymbol* spacesym;
-    SectionSymbol* sectionsym;
-    TokenSymbol* tokensym;
-    UserOpSymbol* useropsym;
-    MacroSymbol* macrosym;
-    LabelSymbol* labelsym;
-    SubtableSymbol* subtablesym;
-    StartSymbol* startsym;
-    EndSymbol* endsym;
-    OperandSymbol* operandsym;
-    VarnodeListSymbol* varlistsym;
-    VarnodeSymbol* varsym;
-    BitrangeSymbol* bitsym;
-    NameSymbol* namesym;
-    ValueSymbol* valuesym;
-    ValueMapSymbol* valuemapsym;
-    ContextSymbol* contextsym;
-    FamilySymbol* famsym;
-    SpecificSymbol* specsym;
+  vector<SleighSymbol *> *symlist;
+  vector<ContextChange *> *contop;
+  SleighSymbol *anysym;
+  SpaceSymbol *spacesym;
+  SectionSymbol *sectionsym;
+  TokenSymbol *tokensym;
+  UserOpSymbol *useropsym;
+  MacroSymbol *macrosym;
+  LabelSymbol *labelsym;
+  SubtableSymbol *subtablesym;
+  StartSymbol *startsym;
+  EndSymbol *endsym;
+  OperandSymbol *operandsym;
+  VarnodeListSymbol *varlistsym;
+  VarnodeSymbol *varsym;
+  BitrangeSymbol *bitsym;
+  NameSymbol *namesym;
+  ValueSymbol *valuesym;
+  ValueMapSymbol *valuemapsym;
+  ContextSymbol *contextsym;
+  FamilySymbol *famsym;
+  SpecificSymbol *specsym;
 
 #line 212 "src/decompile/cpp/slghparse.hh" /* yacc.c:1909  */
 };

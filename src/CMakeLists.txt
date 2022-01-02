@@ -2,32 +2,33 @@ target_sources(
   slgh-compile
   PRIVATE
     address.cc
+    ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
+    ${CMAKE_BINARY_DIR}/src/slghparse.cc
+    ${CMAKE_BINARY_DIR}/src/slghscan.cc
+    ${CMAKE_BINARY_DIR}/src/xml.cc
+    context.cc
+    filemanage.cc
     float.cc
     globalcontext.cc
     opcodes.cc
-    pcoderaw.cc
-    space.cc
-    translate.cc
-    xml.cc
-    context.cc
-    filemanage.cc
     pcodecompile.cc
-    pcodeparse.cc
+    pcoderaw.cc
     semantics.cc
-    sleigh.cc
     sleighbase.cc
+    sleigh.cc
+    slgh_compile.cc
     slghpatexpress.cc
     slghpattern.cc
     slghsymbol.cc
-    slgh_compile.cc
-    slghparse.cc
-    slghscan.cc
+    space.cc
+    translate.cc
 )
 
 target_sources(
   coronium
   PRIVATE
     address.cc
+    ${CMAKE_BINARY_DIR}/src/xml.cc
     context.cc
     emulate.cc
     filemanage.cc
@@ -47,5 +48,4 @@ target_sources(
     slghsymbol.cc
     space.cc
     translate.cc
-    xml.cc
 )

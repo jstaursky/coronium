@@ -44,8 +44,7 @@ versions. You could point SLA_DIR to your top level ghidra folder and
 SLA_LOCATION will be able to search and find the correct .sla file.
 
 After installation compile and run the file =test/example_one/example_one.cpp=
-to make sure everything is working. If you face an issue please create an issue
-so I may fix it. One issue you may face is if you direct =SLA_DIR= to an older
+to make sure everything is working. If you face a problem create an issue. One issue you may face is if you direct =SLA_DIR= to an older
 ghidra installation that uses a different sleigh version. To find out, open one
 of the compiled .sla files inside your ghidra install and note the field
 =<sleigh version= at the top and compare that with an .sla file compiled using
@@ -69,9 +68,8 @@ via the cmdline -- =g++ main.cpp -lcoronium -o main=
 ** Updating to latest the ghidra source code
 The convenience script =update_ghidra_src.py= can be used to ensure that
 coronium uses the latest and greatest source code directly from the official
-ghidra github repo. Just run =./update_ghidra_src.py= If you want the latest.
-You will need to run this prior the install instructions given above.
+ghidra github repo. Just run =./update_ghidra_src.py=. If this is desirable,
+you will need to run the script prior the install instructions given above.
 
 However, by updating you do risk the chance of being unable to build coronium.
-There is no guarantee that the cutting edge ghidra source will always compile
-properly (Though it likely will).
+There is no guarantee that the cutting edge ghidra source will always compile. So far this has yet to be an issue. Regardless, only the ghidra source present in this repo is guaranteed to compile.

@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,37 +26,33 @@
 /// This exception is thrown when a request for load image
 /// data cannot be met, usually because the requested address
 /// range is not in the image.
-struct DataUnavailError : public LowlevelError
-{
-    DataUnavailError (const string& s) : LowlevelError (s) {} ///< Instantiate with an explanatory string
+struct DataUnavailError : public LowlevelError {
+  DataUnavailError(const string &s) : LowlevelError(s) {} ///< Instantiate with an explanatory string
 };
 
 /// \brief A record indicating a function symbol
 ///
 /// This is a lightweight object holding the Address and name of a function
-struct LoadImageFunc
-{
-    Address address;	///< Start of function
-    string name;		///< Name of function
+struct LoadImageFunc {
+  Address address;	///< Start of function
+  string name;		///< Name of function
 };
 
 /// \brief A record describing a section bytes in the executable
 ///
 /// A lightweight object specifying the location and size of the section and basic properties
-struct LoadImageSection
-{
-    /// Boolean properties a section might have
-    enum
-    {
-        unalloc = 1,		///< Not allocated in memory (debug info)
-        noload = 2,			///< uninitialized section
-        code = 4,			///< code only
-        data = 8,			///< data only
-        readonly = 16		///< read only section
-    };
-    Address address;		///< Starting address of section
-    uintb size;			///< Number of bytes in section
-    uint4 flags;			///< Properties of the section
+struct LoadImageSection {
+  /// Boolean properties a section might have
+  enum {
+    unalloc = 1,		///< Not allocated in memory (debug info)
+    noload = 2,			///< uninitialized section
+    code = 4,			///< code only
+    data = 8,			///< data only
+    readonly = 16		///< read only section
+  };
+  Address address;		///< Starting address of section
+  uintb size;			///< Number of bytes in section
+  uint4 flags;			///< Properties of the section
 };
 
 /// \brief An interface into a particular binary executable image
@@ -72,25 +68,24 @@ struct LoadImageSection
 /// this class exactly once, during initialization, and used to
 /// populate the main decompiler database. This class currently
 /// has only rudimentary support for accessing such properties.
-class LoadImage
-{
+class LoadImage {
 protected:
-    string filename;		///< Name of the loadimage
+  string filename;		///< Name of the loadimage
 public:
-    LoadImage (const string& f);	///< LoadImage constructor
-    virtual ~LoadImage (void);	///< LoadImage destructor
-    const string& getFileName (void) const; ///< Get the name of the LoadImage
-    virtual void loadFill (uint1* ptr, int4 size, const Address& addr) = 0; ///< Get data from the LoadImage
-    virtual void openSymbols (void) const; ///< Prepare to read symbols
-    virtual void closeSymbols (void) const; ///< Stop reading symbols
-    virtual bool getNextSymbol (LoadImageFunc& record) const; ///< Get the next symbol record
-    virtual void openSectionInfo (void) const; ///< Prepare to read section info
-    virtual void closeSectionInfo (void) const; ///< Stop reading section info
-    virtual bool getNextSection (LoadImageSection& sec) const; ///< Get info on the next section
-    virtual void getReadonly (RangeList& list) const; ///< Return list of \e readonly address ranges
-    virtual string getArchType (void) const = 0; ///< Get a string indicating the architecture type
-    virtual void adjustVma (long adjust) = 0; ///< Adjust load addresses with a global offset
-    uint1* load (int4 size, const Address& addr);	///< Load a chunk of image
+  LoadImage(const string &f);	///< LoadImage constructor
+  virtual ~LoadImage(void);	///< LoadImage destructor
+  const string &getFileName(void) const; ///< Get the name of the LoadImage
+  virtual void loadFill(uint1 *ptr,int4 size,const Address &addr)=0; ///< Get data from the LoadImage
+  virtual void openSymbols(void) const; ///< Prepare to read symbols
+  virtual void closeSymbols(void) const; ///< Stop reading symbols
+  virtual bool getNextSymbol(LoadImageFunc &record) const; ///< Get the next symbol record
+  virtual void openSectionInfo(void) const; ///< Prepare to read section info
+  virtual void closeSectionInfo(void) const; ///< Stop reading section info
+  virtual bool getNextSection(LoadImageSection &sec) const; ///< Get info on the next section
+  virtual void getReadonly(RangeList &list) const; ///< Return list of \e readonly address ranges
+  virtual string getArchType(void) const=0; ///< Get a string indicating the architecture type
+  virtual void adjustVma(long adjust)=0; ///< Adjust load addresses with a global offset
+  uint1 *load(int4 size,const Address &addr);	///< Load a chunk of image
 };
 
 /// \brief A simple raw binary loadimage
@@ -98,57 +93,51 @@ public:
 /// This is probably the simplest loadimage.  Bytes from the image are read directly from a file stream.
 /// The address associated with each byte is determined by a single value, the vma, which is the address
 /// of the first byte in the file.  No symbols or sections are supported
-class RawLoadImage : public LoadImage
-{
-    uintb vma;			///< Address of first byte in the file
-    ifstream* thefile;		///< Main file stream for image
-    uintb filesize;		///< Total number of bytes in the loadimage/file
-    AddrSpace* spaceid;		///< Address space that the file bytes are mapped to
+class RawLoadImage : public LoadImage {
+  uintb vma;			///< Address of first byte in the file
+  ifstream *thefile;		///< Main file stream for image
+  uintb filesize;		///< Total number of bytes in the loadimage/file
+  AddrSpace *spaceid;		///< Address space that the file bytes are mapped to
 public:
-    RawLoadImage (const string& f); ///< RawLoadImage constructor
-    void attachToSpace (AddrSpace* id) { spaceid = id; }	///< Attach the raw image to a particular space
-    void open (void);					///< Open the raw file for reading
-    virtual ~RawLoadImage (void);				///< RawLoadImage destructor
-    virtual void loadFill (uint1* ptr, int4 size, const Address& addr);
-    virtual string getArchType (void) const;
-    virtual void adjustVma (long adjust);
+  RawLoadImage(const string &f); ///< RawLoadImage constructor
+  void attachToSpace(AddrSpace *id) { spaceid = id; }	///< Attach the raw image to a particular space
+  void open(void);					///< Open the raw file for reading
+  virtual ~RawLoadImage(void);				///< RawLoadImage destructor
+  virtual void loadFill(uint1 *ptr,int4 size,const Address &addr);
+  virtual string getArchType(void) const;
+  virtual void adjustVma(long adjust);
 };
 
 /// For the base class there is no relevant initialization except
 /// the name of the image.
 /// \param f is the name of the image
-inline LoadImage::LoadImage (const string& f)
-{
-    filename = f;
+inline LoadImage::LoadImage(const string &f) {
+  filename = f;
 }
 
 /// The destructor for the load image object.
-inline LoadImage::~LoadImage (void)
-{
+inline LoadImage::~LoadImage(void) {
 }
 
 /// The loadimage is usually associated with a file. This routine
 /// retrieves the name as a string.
 /// \return the name of the image
-inline const string& LoadImage::getFileName (void) const
-{
-    return filename;
+inline const string &LoadImage::getFileName(void) const {
+  return filename;
 }
 
 /// This routine should read in and parse any symbol information
 /// that the load image contains about executable.  Once this
 /// method is called, individual symbol records are read out
 /// using the getNextSymbol() method.
-inline void LoadImage::openSymbols (void) const
-{
+inline void LoadImage::openSymbols(void) const {
 }
 
 /// Once all the symbol information has been read out from the
 /// load image via the openSymbols() and getNextSymbol() calls,
 /// the application should call this method to free up resources
 /// used in parsing the symbol information.
-inline void LoadImage::closeSymbols (void) const
-{
+inline void LoadImage::closeSymbols(void) const {
 }
 
 /// This method is used to read out an individual symbol record,
@@ -159,24 +148,21 @@ inline void LoadImage::closeSymbols (void) const
 /// This indicates the end of the symbols.
 /// \param record is a reference to the symbol record to be filled in
 /// \return \b true if there are more records to read
-inline bool LoadImage::getNextSymbol (LoadImageFunc& record) const
-{
-    return false;
+inline bool LoadImage::getNextSymbol(LoadImageFunc &record) const {
+  return false;
 }
 
 /// This method initializes iteration over all the sections of
 /// bytes that are mapped by the load image.  Once this is called,
 /// information on individual sections should be read out with
 /// the getNextSection() method.
-inline void LoadImage::openSectionInfo (void) const
-{
+inline void LoadImage::openSectionInfo(void) const {
 }
 
 /// Once all the section information is read from the load image
 /// using the getNextSection() method, this method should be
 /// called to free up any resources used in parsing the section info.
-inline void LoadImage::closeSectionInfo (void) const
-{
+inline void LoadImage::closeSectionInfo(void) const {
 }
 
 /// This method is used to read out a record that describes a
@@ -185,9 +171,8 @@ inline void LoadImage::closeSectionInfo (void) const
 /// to get info on additional sections.
 /// \param record is a reference to the info record to be filled in
 /// \return \b true if there are more records to read
-inline bool LoadImage::getNextSection (LoadImageSection& record) const
-{
-    return false;
+inline bool LoadImage::getNextSection(LoadImageSection &record) const {
+  return false;
 }
 
 /// This method should read out information about \e all
@@ -196,8 +181,7 @@ inline bool LoadImage::getNextSection (LoadImageSection& record) const
 /// once, so all information should be written to the passed
 /// RangeList object.
 /// \param list is where readonly info will get put
-inline void LoadImage::getReadonly (RangeList& list) const
-{
+inline void LoadImage::getReadonly(RangeList &list) const {
 }
 
 /// \fn void LoadImage::adjustVma(long adjust)

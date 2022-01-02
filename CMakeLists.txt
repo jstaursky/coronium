@@ -22,33 +22,33 @@ find_package(FLEX REQUIRED)
 add_custom_target(
   pcodeparse
   echo "Creating pcodeparse.cc"
-  DEPENDS ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
+  DEPENDS ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
 )
 add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
+  OUTPUT ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
   COMMAND ${BISON_EXECUTABLE}
-  ARGS -y ${CMAKE_SOURCE_DIR}/parse/pcodeparse.y -p pcode -o ${CMAKE_SOURCE_DIR}/src/pcodeparse.cc
+  ARGS -y ${CMAKE_SOURCE_DIR}/parse/pcodeparse.y -p pcode -o ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
 )
 # generate xml.cc
 add_custom_target(
   xml
   echo "Creating xml.cc"
-  DEPENDS ${CMAKE_SOURCE_DIR}/src/xml.cc
+  DEPENDS ${CMAKE_BINARY_DIR}/src/xml.cc
 )
 add_custom_command(
-  OUTPUT ${CMAKE_SOURCE_DIR}/src/xml.cc
+  OUTPUT ${CMAKE_BINARY_DIR}/src/xml.cc
   COMMAND ${BISON_EXECUTABLE}
-  ARGS -y ${CMAKE_SOURCE_DIR}/parse/xml.y -p xml -o ${CMAKE_SOURCE_DIR}/src/xml.cc
+  ARGS -y ${CMAKE_SOURCE_DIR}/parse/xml.y -p xml -o ${CMAKE_BINARY_DIR}/src/xml.cc
 )
 # generate slghparse.cc
 bison_target(
-  slgh-parse ${CMAKE_SOURCE_DIR}/parse/slghparse.y ${CMAKE_SOURCE_DIR}/src/slghparse.cc
+  slgh-parse ${CMAKE_SOURCE_DIR}/parse/slghparse.y ${CMAKE_BINARY_DIR}/src/slghparse.cc
   DEFINES_FILE ${CMAKE_SOURCE_DIR}/src/slghparse.tab.hh
 )
 # generate slghscan.cc
 flex_target(
   slgh-scan ${CMAKE_SOURCE_DIR}/parse/slghscan.l
-  ${CMAKE_SOURCE_DIR}/src/slghscan.cc
+  ${CMAKE_BINARY_DIR}/src/slghscan.cc
 )
 add_flex_bison_dependency(slgh-scan slgh-parse)
 
@@ -91,10 +91,13 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/opcodes.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/partmap.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/pcodecompile.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/pcodeparse.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/pcoderaw.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/semantics.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/sleighbase.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/sleigh.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/slgh_compile.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/slghparse.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghpatexpress.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghpattern.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghsymbol.hh
