@@ -65,3 +65,13 @@ After install you can link to targets with headers such as
 #+end_src
 
 via the cmdline -- =g++ main.cpp -lcoronium -o main=
+
+** Updating to latest the ghidra source code
+The convenience script =update_ghidra_src.py= can be used to ensure that
+coronium uses the latest and greatest source code directly from the official
+ghidra github repo. Just run =./update_ghidra_src.py= If you want the latest.
+You will need to run this prior the install instructions given above.
+
+However, by updating you do risk the chance of being unable to build coronium.
+There is no guarantee that the cutting edge ghidra source will always compile
+properly (Though it likely will).

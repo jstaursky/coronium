@@ -4,9 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
+ * 
  *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,15 +15,15 @@
  */
 #include "ghidra_context.hh"
 
-const TrackedSet& ContextGhidra::getTrackedSet (const Address& addr) const
+const TrackedSet &ContextGhidra::getTrackedSet(const Address &addr) const
 
 {
-    cache.clear();
+  cache.clear();
 
-    Document* doc = ((ArchitectureGhidra*)glb)->getTrackedRegisters (addr);
-    Element* root = doc->getRoot();
+  Document *doc = ((ArchitectureGhidra *)glb)->getTrackedRegisters(addr);
+  Element *root = doc->getRoot();
 
-    restoreTracked (root, glb, cache);
-    delete doc;
-    return cache;
+  restoreTracked(root,glb,cache);
+  delete doc;
+  return cache;
 }
