@@ -13,12 +13,14 @@ ghidra_json = req.json()
 # Download all files in the src/decompile/cpp subdirectory github.com/NationalSecurityAgency/ghidra
 for el in ghidra_json:
     if src_names.count(el["name"]) > 0:
+        print("updating file " + el["name"])
         fcontent = requests.get(el["download_url"])
         fpath = os.path.join(os.getcwd(), "src", el["name"])
         file = open(fpath, 'w')
         file.write(fcontent.text)
 
     if hdr_names.count(el["name"]) > 0:
+        print("updating file " + el["name"])
         fcontent = requests.get(el["download_url"])
         fpath = os.path.join(os.getcwd(), "include", el["name"])
         file = open(fpath, 'w')
