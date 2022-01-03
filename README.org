@@ -72,4 +72,6 @@ ghidra github repo. Just run =./update_ghidra_src.py=. If this is desirable,
 you will need to run the script prior the install instructions given above.
 
 However, by updating you do risk the chance of being unable to build coronium.
-There is no guarantee that the cutting edge ghidra source will always compile. So far this has yet to be an issue. Regardless, only the ghidra source present in this repo is guaranteed to compile.
+There is no guarantee that the cutting edge ghidra source will always compile.
+So far this has yet to be an issue. Regardless, only the ghidra source present
+in this repo is guaranteed to compile.
