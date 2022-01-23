@@ -3,10 +3,12 @@
 
 #include <dirent.h>             // DIR
 #include <libgen.h>             // dirname
-
 #include <stdlib.h>             // getenv
 #include <string>
 #include <vector>
+
+#define CORONIUM_VERSION                        \
+    "@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
 
 void search_directory (std::string dirname, std::vector<std::string>& files)
 {

@@ -5,8 +5,9 @@ includedir=${prefix}/include/coronium
 
 Name: coronium
 Description: Coronium reversing lib extracted from ghidra.
-Version: @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+Version: @PROJECT_VERSION@
 URL: https://github.com/jstaursky/coronium
-archive=${libdir}/libcoronium.a
+# static lib not implemented.
+# archive=${libdir}/libcoronium.a
 Libs: -L${libdir} -lcoronium
 Cflags: -I${includedir}
