@@ -48,4 +48,52 @@ target_sources(
     slghsymbol.cc
     space.cc
     translate.cc
+    # NEW
+    bfd_arch.cc
+    loadimage_bfd.cc
+    sleigh_arch.cc
+    architecture.cc
+    capability.cc
+    varmap.cc
+    database.cc
+    variable.cc
+    varnode.cc
+    coreaction.cc
+    cover.cc
+    type.cc
+
+    ruleaction.cc
+    op.cc
+    action.cc
+    funcdata.cc
+    typeop.cc
+    block.cc
+    cpool.cc
+    jumptable.cc
+    emulateutil.cc
+    cast.cc
+    prettyprint.cc
+    rangeutil.cc
+    pcodeinject.cc
+    blockaction.cc
+    fspec.cc
+    comment.cc
+    stringmanage.cc
+    userop.cc
+    options.cc
+    transform.cc
+    prefersplit.cc
+
+    override.cc
+    inject_sleigh.cc
+    heritage.cc
+    merge.cc
+    dynamic.cc
+
+    flow.cc
+    condexe.cc
+    crc32.cc
+    double.cc
+    subflow.cc
+    printc.cc
 )

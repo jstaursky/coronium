@@ -26,6 +26,8 @@ install(FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
+find_library(BFD bfd)
+
 # Generate pcodeparse.cc
 add_custom_target(
   pcodeparse
@@ -66,6 +68,7 @@ add_flex_bison_dependency(slgh-scan slgh-parse)
 #
 add_executable(slgh-compile "")
 add_library(coronium SHARED "")
+target_link_libraries(coronium ${BFD})
 
 if(NOT CMAKE_INSTALL_LIBDIR)
   set(CMAKE_INSTALL_LIBDIR lib)
@@ -129,6 +132,53 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/translate.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/types.h
   ${CMAKE_SOURCE_DIR}/include/coronium/xml.hh
+  # NEW
+  ${CMAKE_SOURCE_DIR}/include/coronium/bfd_arch.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/loadimage_bfd.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/sleigh_arch.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/architecture.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/capability.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/varmap.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/database.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/variable.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/varnode.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/coreaction.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/cover.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/type.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/ruleaction.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/rangemap.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/op.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/action.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/funcdata.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/typeop.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/block.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/emulateutil.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/cast.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/prettyprint.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/rangeutil.hh
+
+  ${CMAKE_SOURCE_DIR}/include/coronium/pcodeinject.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/blockaction.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/fspec.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/comment.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/stringmanage.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/userop.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/options.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/transform.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/prefersplit.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/override.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/inject_sleigh.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/heritage.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/merge.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/dynamic.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/flow.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/condexe.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/crc32.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/double.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/subflow.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/printc.hh
+
+  DESTINATION
   DESTINATION
   include/coronium
 )

@@ -13,17 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-apply from: "$rootProject.projectDir/gradle/distributableGhidraModule.gradle"
-apply from: "$rootProject.projectDir/gradle/javaProject.gradle"
-apply from: "$rootProject.projectDir/gradle/processorProject.gradle"
-apply from: "$rootProject.projectDir/gradle/jacocoProject.gradle"
-apply from: "$rootProject.projectDir/gradle/javaTestProject.gradle"
-apply plugin: 'eclipse'
+/// \file crc32.hh
+/// \brief Table and function for computing a CRC32
 
+#ifndef __CRC32__
+#define __CRC32__
 
-eclipse.project.name = 'Processors 68000'
+#include "types.h"
 
+extern uint4 crc32tab[];	///< Table for quickly computing a 32-bit Cyclic Redundacy Check (CRC)
 
-dependencies {
-	api project(':Base')
-}
+/// \brief Feed 8 bits into a CRC register
+///
+/// \param reg is the current state of the CRC register
+/// \param val holds 8 bits (least significant) to feed in
+/// \return the new value of the register
+inline uint4 crc_update(uint4 reg,uint4 val) {
+  return crc32tab[(reg ^ val)&0xff] ^ (reg>>8); }
+
+#endif
