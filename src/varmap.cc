@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ctype.h>
+#include <algorithm>
+#include <memory>
+#include <ostream>
+#include <set>
+
 #include "varmap.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "dynamic.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "heritage.hh"
+#include "op.hh"
+#include "space.hh"
+#include "type.hh"
+#include "variable.hh"
+#include "xml.hh"
 
 /// \brief Can the given intersecting RangeHint coexist with \b this at their given offsets
 ///

@@ -13,7 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <memory>
+#include <ostream>
+#include <string>
+#include <utility>
+
 #include "flow.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "database.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "jumptable.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "override.hh"
+#include "pcodeinject.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "translate.hh"
+#include "userop.hh"
+#include "varmap.hh"
+#include "varnode.hh"
 
 /// Prepare for tracing flow for a new function.
 /// The Funcdata object and references to its internal containers must be explicitly given.

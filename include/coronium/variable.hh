@@ -19,9 +19,16 @@
 #ifndef __CPUI_TYPEVAR__
 #define __CPUI_TYPEVAR__
 
+#include <ostream>
+#include <vector>
+
 #include "varnode.hh"
+#include "cover.hh"
+#include "types.h"
 
 class Symbol;
+class Datatype;
+class SymbolEntry;
 
 /// \brief A high-level variable modeled as a list of low-level variables, each written once
 ///

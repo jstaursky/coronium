@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <string>
+
 #include "slghpattern.hh"
+#include "context.hh"
+#include "xml.hh"
 
 uintm DisjointPattern::getMask(int4 startbit,int4 size,bool context) const
 

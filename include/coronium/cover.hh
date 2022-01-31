@@ -18,7 +18,12 @@
 #ifndef __CPUI_COVER__
 #define __CPUI_COVER__
 
+#include <iosfwd>
+#include <map>
+#include <vector>
+
 #include "type.hh"
+#include "types.h"
 
 class PcodeOp;
 class FlowBlock;

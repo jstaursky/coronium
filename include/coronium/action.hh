@@ -18,7 +18,20 @@
 #ifndef __CPUI_ACTION__
 #define __CPUI_ACTION__
 
+#include <iosfwd>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "block.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "types.h"
+
+class Architecture;
+class Element;
+class Funcdata;
 
 /// \brief The list of groups defining a \e root Action
 ///

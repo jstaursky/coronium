@@ -18,7 +18,19 @@
 #ifndef __CONDEXE__
 #define __CONDEXE__
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include "funcdata.hh"
+#include "action.hh"
+#include "types.h"
+
+class BlockBasic;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 /// \brief A helper class for describing the similarity of the boolean condition between 2 CBRANCH operations
 ///

@@ -13,9 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <list>
+#include <map>
+#include <memory>
+#include <utility>
+
 #include "dynamic.hh"
 #include "funcdata.hh"
 #include "crc32.hh"
+#include "op.hh"
+#include "varnode.hh"
 
 // Table for how to hash opcodes, lumps certain operators (i.e. ADD SUB PTRADD PTRSUB) into one hash
 // zero indicates the operator should be skipped

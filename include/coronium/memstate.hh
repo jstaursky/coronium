@@ -19,8 +19,17 @@
 #ifndef __CPUI_MEMSTATE__
 #define __CPUI_MEMSTATE__
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include "pcoderaw.hh"
 #include "loadimage.hh"
+#include "error.hh"
+#include "types.h"
+
+class AddrSpace;
+class LoadImage;
 
 /// \brief Memory storage/state for a single AddressSpace
 ///

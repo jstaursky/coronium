@@ -14,7 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string.h>
+#include <ostream>
+
 #include "loadimage_bfd.hh"
+#include "space.hh"
 
 int4 LoadImageBfd::bfdinit = 0;	// Global initialization variable
 

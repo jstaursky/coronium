@@ -19,7 +19,17 @@
 #ifndef __CPOOL__
 #define __CPOOL__
 
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "type.hh"
+#include "types.h"
+
+class Datatype;
+class Element;
+class TypeFactory;
 
 /// \brief A description of a byte-code object referenced by a constant
 ///

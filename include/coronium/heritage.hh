@@ -20,7 +20,22 @@
 #ifndef __CPUI_HERITAGE__
 #define __CPUI_HERITAGE__
 
+#include <list>
+#include <map>
+#include <vector>
+
 #include "block.hh"
+#include "address.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "types.h"
+#include "varnode.hh"
+
+class BlockBasic;
+class FlowBlock;
+class JoinRecord;
+class ValueSetRead;
 
 /// Container holding the stack system for the renaming algorithm.  Every disjoint address
 /// range (indexed by its initial address) maps to its own Varnode stack.

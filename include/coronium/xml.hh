@@ -18,12 +18,13 @@
 #ifndef __CPUI_XML__
 #define __CPUI_XML__
 
-#include "types.h"
 #include <fstream>
 #include <iomanip>
 #include <string>
 #include <vector>
 #include <map>
+
+#include "types.h"
 
 using namespace std;
 
@@ -142,6 +143,7 @@ public:
 };
 
 class Element;
+
 typedef vector<Element *> List;		///< A list of XML elements
 
 /// \brief An XML element.  A node in the DOM tree.

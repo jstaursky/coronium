@@ -19,7 +19,18 @@
 #ifndef __CPUI_TYPE__
 #define __CPUI_TYPE__
 
+#include <map>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "address.hh"
+#include "space.hh"
+#include "types.h"
+
+class Element;
 
 /// Print a hex dump of a data buffer to stream
 extern void print_data(ostream &s,uint1 *buffer,int4 size,const Address &baseaddr);

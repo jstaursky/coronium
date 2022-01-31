@@ -18,7 +18,20 @@
 #ifndef __SUBVARIABLE_FLOW__
 #define __SUBVARIABLE_FLOW__
 
+#include <list>
+#include <map>
+#include <vector>
+
 #include "funcdata.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "transform.hh"
+#include "types.h"
+
+class FloatFormat;
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 /// \brief Class for shrinking big Varnodes carrying smaller logical values
 ///
@@ -38,6 +51,7 @@
 /// Varnodes to becomes dead code.
 class SubvariableFlow {
   class ReplaceOp;
+
   /// \brief Placeholder node for Varnode holding a smaller logical value
   class ReplaceVarnode {
     friend class SubvariableFlow;

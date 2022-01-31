@@ -19,13 +19,43 @@
 /// \file funcdata.hh
 /// \brief Utilities for processing data structures associated with a single function
 
+#include <iosfwd>
+#include <list>
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "architecture.hh"
 #include "override.hh"
 #include "heritage.hh"
 #include "merge.hh"
 #include "dynamic.hh"
+#include "address.hh"
+#include "block.hh"
+#include "fspec.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "translate.hh"
+#include "types.h"
+#include "varnode.hh"
 
 class FlowInfo;
+class AddrSpace;
+class Architecture;
+class Datatype;
+class DynamicHash;
+class Element;
+class FunctionSymbol;
+class HighVariable;
+class InjectPayload;
+class JumpTable;
+class LanedRegister;
+class Scope;
+class ScopeLocal;
+class Symbol;
+class SymbolEntry;
 
 /// \brief Container for data structures associated with a single function
 ///

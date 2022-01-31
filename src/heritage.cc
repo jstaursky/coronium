@@ -13,9 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <type_traits>
+#include <utility>
+
 #include "heritage.hh"
 #include "funcdata.hh"
 #include "prefersplit.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "override.hh"
+#include "pcoderaw.hh"
+#include "rangeutil.hh"
+#include "translate.hh"
+#include "varmap.hh"
 
 /// Update disjoint cover making sure (addr,size) is contained in a single element
 /// and return iterator to this element. Pass back \b intersect value:

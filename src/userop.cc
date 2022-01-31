@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "userop.hh"
 #include "funcdata.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "error.hh"
+#include "op.hh"
+#include "pcodeinject.hh"
+#include "space.hh"
+#include "translate.hh"
+#include "varnode.hh"
+#include "xml.hh"
 
 void InjectedUserOp::restoreXml(const Element *el)
 

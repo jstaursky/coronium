@@ -19,7 +19,20 @@
 /// \file blockaction.hh
 /// \brief Actions and classes associated with transforming and structuring the control-flow graph
 
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "action.hh"
+#include "types.h"
+
+class BlockBasic;
+class BlockGraph;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 /// \brief Class for holding an edge while the underlying graph is being manipulated
 ///

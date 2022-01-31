@@ -16,7 +16,14 @@
 #ifndef __SLGHPATTERN__
 #define __SLGHPATTERN__
 
+#include <iosfwd>
+#include <vector>
+
 #include "context.hh"
+#include "types.h"
+
+class Element;
+class ParserWalker;
 
 // A mask/value pair viewed as two bitstreams
 class PatternBlock {
@@ -48,6 +55,7 @@ public:
 };
 
 class DisjointPattern;
+
 class Pattern {
 public:
   virtual ~Pattern(void) {}

@@ -19,10 +19,21 @@
 #ifndef __CPUI_EMULATE__
 #define __CPUI_EMULATE__
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include "memstate.hh"
 #include "translate.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "types.h"
 
 class Emulate;			// Forward declaration
+class MemoryState;
+class OpBehavior;
+class PcodeOpRaw;
+struct VarnodeData;
 
 /// \brief A collection of breakpoints for the emulator
 ///

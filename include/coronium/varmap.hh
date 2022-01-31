@@ -19,7 +19,24 @@
 #ifndef __CPUI_VARMAP__
 #define __CPUI_VARMAP__
 
+#include <iosfwd>
+#include <list>
+#include <string>
+#include <vector>
+
 #include "database.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "types.h"
+#include "varnode.hh"
+
+class AddrSpace;
+class Architecture;
+class Datatype;
+class Element;
+class FuncProto;
+class Funcdata;
+class TypeFactory;
 
 /// \brief A symbol name recommendation with its associated storage location
 ///

@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <string>
+#include <utility>
+
 #include "merge.hh"
 #include "funcdata.hh"
+#include "block.hh"
+#include "database.hh"
+#include "error.hh"
+#include "space.hh"
+#include "type.hh"
+#include "varmap.hh"
 
 /// This instance assumes the identity of the given Varnode and the defining index is
 /// cached to facilitate quick sorting.

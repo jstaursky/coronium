@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "pcodeinject.hh"
 #include "architecture.hh"
+#include "error.hh"
+#include "xml.hh"
+
+class AddrSpace;
 
 /// \brief Read in an \<input> or \<output> XML tag describing an injection parameter
 ///

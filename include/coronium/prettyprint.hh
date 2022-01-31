@@ -19,7 +19,12 @@
 #ifndef __PRETTYPRINT__
 #define __PRETTYPRINT__
 
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "type.hh"
+#include "types.h"
 
 class Varnode;
 class PcodeOp;
@@ -27,6 +32,8 @@ class FlowBlock;
 class Funcdata;
 class Symbol;
 class PendPrint;
+class AddrSpace;
+class Datatype;
 
 /// \brief Base class (and interface) for pretty printing and XML markup of tokens
 ///

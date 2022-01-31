@@ -13,7 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <list>
+#include <utility>
+
 #include "condexe.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "error.hh"
+#include "funcdata.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "varnode.hh"
 
 ConditionMarker::ConditionMarker(void)
 

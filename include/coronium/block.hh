@@ -19,7 +19,19 @@
 #ifndef __CPUI_BLOCK__
 #define __CPUI_BLOCK__
 
+#include <algorithm>
+#include <iosfwd>
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "jumptable.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "printlanguage.hh"
+#include "types.h"
+#include "xml.hh"
 
 class BlockBasic;		// Forward declarations
 class BlockList;
@@ -34,6 +46,11 @@ class BlockInfLoop;
 class BlockSwitch;
 class PrintLanguage;
 class BlockMap;
+class AddrSpaceManager;
+class Datatype;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
 
 /// \brief A control-flow edge between blocks (FlowBlock)
 ///

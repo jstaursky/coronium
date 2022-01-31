@@ -13,8 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <istream>
+#include <set>
+#include <utility>
+
 #include "fspec.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "database.hh"
+#include "op.hh"
+#include "override.hh"
+#include "pcodeinject.hh"
+#include "translate.hh"
+#include "variable.hh"
+#include "varmap.hh"
+#include "varnode.hh"
+#include "xml.hh"
 
 /// \brief Find a ParamEntry matching the given storage Varnode
 ///

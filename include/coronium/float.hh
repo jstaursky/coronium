@@ -19,7 +19,12 @@
 #ifndef __CPUI_FLOATFORMAT__
 #define __CPUI_FLOATFORMAT__
 
+#include <iosfwd>
+
 #include "xml.hh"
+#include "types.h"
+
+class Element;
 
 /// \brief Encoding information for a single floating-point format
 ///

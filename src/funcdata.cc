@@ -13,7 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <istream>
+#include <set>
+
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "comment.hh"
+#include "database.hh"
+#include "error.hh"
+#include "jumptable.hh"
+#include "loadimage.hh"
+#include "pcodeinject.hh"
+#include "space.hh"
+#include "type.hh"
+#include "variable.hh"
+#include "varmap.hh"
+#include "xml.hh"
 //#include <fstream>
 
 /// \param nm is the (base) name of the function

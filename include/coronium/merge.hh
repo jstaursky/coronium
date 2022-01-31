@@ -19,7 +19,19 @@
 /// \file merge.hh
 /// \brief Utilities for merging low-level Varnodes into high-level variables
 
+#include <list>
+#include <map>
+#include <vector>
+
 #include "op.hh"
+#include "address.hh"
+#include "cover.hh"
+#include "opcodes.hh"
+#include "types.h"
+#include "variable.hh"
+#include "varnode.hh"
+
+class Datatype;
 
 /// \brief A record for caching a Cover intersection test between two HighVariable objects
 ///

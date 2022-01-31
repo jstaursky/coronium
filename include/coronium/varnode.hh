@@ -18,17 +18,27 @@
 #ifndef __CPUI_VARNODE__
 #define __CPUI_VARNODE__
 
+#include <iosfwd>
+#include <list>
+#include <set>
+
 #include "pcoderaw.hh"
 #include "cover.hh"
+#include "address.hh"
+#include "types.h"
 
 class HighVariable;
-
 class Varnode;		// Forward declaration
 class VarnodeBank;
 class Merge;
 class Funcdata;
 class SymbolEntry;
 class ValueSet;
+class AddrSpace;
+class AddrSpaceManager;
+class Cover;
+class Datatype;
+class PcodeOp;
 
 /// \brief Compare two Varnode pointers by location then definition
 struct VarnodeCompareLocDef {

@@ -19,11 +19,45 @@
 #ifndef __PRINTC__
 #define __PRINTC__
 
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "printlanguage.hh"
 #include "comment.hh"
+#include "address.hh"
+#include "prettyprint.hh"
+#include "types.h"
 
 class FuncProto;
 class JumpTable;
+class Architecture;
+class BlockBasic;
+class BlockCondition;
+class BlockCopy;
+class BlockDoWhile;
+class BlockGoto;
+class BlockGraph;
+class BlockIf;
+class BlockInfLoop;
+class BlockList;
+class BlockSwitch;
+class BlockWhileDo;
+class Datatype;
+class EquateSymbol;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
+class Scope;
+class Symbol;
+class TypeBase;
+class TypeChar;
+class TypeEnum;
+class TypeFactory;
+class TypePointer;
+class TypeStruct;
+class Varnode;
+struct TypeField;
 
 /// \brief Factory and static initializer for the "c-language" back-end to the decompiler
 ///

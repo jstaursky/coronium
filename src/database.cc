@@ -13,10 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ctype.h>
+#include <iomanip>
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "database.hh"
 #include "funcdata.hh"
 #include "crc32.hh"
-#include <ctype.h>
+#include "architecture.hh"
+#include "error.hh"
+#include "pcoderaw.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "variable.hh"
 
 uint8 Symbol::ID_BASE = 0x4000000000000000L;
 

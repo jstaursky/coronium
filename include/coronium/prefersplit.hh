@@ -17,8 +17,15 @@
 #ifndef __PREFERSPLIT__
 #define __PREFERSPLIT__
 
+#include <vector>
+
 #include "varnode.hh"
+#include "pcoderaw.hh"
+#include "types.h"
+
 class Funcdata;			// Forward declaration
+class PcodeOp;
+class Varnode;
 
 struct PreferSplitRecord {
   VarnodeData storage;

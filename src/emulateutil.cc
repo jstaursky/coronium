@@ -13,8 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <map>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "architecture.hh"
 #include "emulateutil.hh"
+#include "address.hh"
+#include "block.hh"
+#include "emulate.hh"
+#include "error.hh"
+#include "loadimage.hh"
+#include "op.hh"
+#include "opbehavior.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "types.h"
+#include "userop.hh"
+#include "varnode.hh"
+
+class PcodeEmit;
 
 /// \param g is the Architecture providing the LoadImage
 EmulatePcodeOp::EmulatePcodeOp(Architecture *g)

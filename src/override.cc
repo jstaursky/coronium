@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "override.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "op.hh"
+#include "space.hh"
+#include "type.hh"
+#include "xml.hh"
 
 void Override::clear(void)
 

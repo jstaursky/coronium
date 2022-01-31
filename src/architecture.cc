@@ -15,8 +15,47 @@
  */
 // Set up decompiler for specific architectures
 
-#include "coreaction.hh"
+#include <algorithm>
+#include <istream>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "flow.hh"
+#include "action.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "cast.hh"
+#include "comment.hh"
+#include "cpool.hh"
+#include "database.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "funcdata.hh"
+#include "globalcontext.hh"
+#include "loadimage.hh"
+#include "op.hh"
+#include "options.hh"
+#include "override.hh"
+#include "pcodeinject.hh"
+#include "pcoderaw.hh"
+#include "prefersplit.hh"
+#include "printlanguage.hh"
+#include "space.hh"
+#include "stringmanage.hh"
+#include "transform.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "typeop.hh"
+#include "types.h"
+#include "userop.hh"
+#include "varnode.hh"
+#include "xml.hh"
+
+class OpBehavior;
 #ifdef CPUI_RULECOMPILE
 #include "rulecompile.hh"
 #endif

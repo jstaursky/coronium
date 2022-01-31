@@ -13,9 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "inject_sleigh.hh"
 #include "pcodeparse.hh"
 #include "architecture.hh"
+#include "context.hh"
+#include "error.hh"
+#include "pcoderaw.hh"
+#include "semantics.hh"
+#include "sleighbase.hh"
+#include "translate.hh"
+#include "xml.hh"
+
+class AddrSpace;
+class ContextCache;
+class OpBehavior;
 
 InjectContextSleigh::~InjectContextSleigh(void)
 

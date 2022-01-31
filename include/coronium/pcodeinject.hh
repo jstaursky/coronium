@@ -19,9 +19,20 @@
 #ifndef __PCODEINJECT__
 #define __PCODEINJECT__
 
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "emulateutil.hh"
+#include "address.hh"
+#include "pcoderaw.hh"
+#include "translate.hh"
+#include "types.h"
 
 class Architecture;
+class Element;
+class OpBehavior;
 
 /// \brief An input or output parameter to a p-code injection payload
 ///

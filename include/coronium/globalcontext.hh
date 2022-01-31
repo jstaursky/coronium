@@ -19,8 +19,19 @@
 /// \file globalcontext.hh
 /// \brief Utilities for getting address-based context to the disassembler and decompiler
 
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "pcoderaw.hh"
 #include "partmap.hh"
+#include "address.hh"
+#include "types.h"
+
+class AddrSpace;
+class AddrSpaceManager;
+class Element;
 
 /// \brief Description of a context variable within the disassembly context \e blob
 ///

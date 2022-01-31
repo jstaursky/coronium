@@ -15,6 +15,13 @@
  */
 #include "cast.hh"
 #include "op.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "type.hh"
+#include "variable.hh"
+#include "varnode.hh"
+
+class FuncProto;
 
 /// Sets the TypeFactory used to produce data-types for the arithmeticOutputStandard() method
 /// \param t is the TypeFactory

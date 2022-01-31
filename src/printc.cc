@@ -13,8 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+#include <list>
+#include <map>
+#include <memory>
+#include <ostream>
+#include <utility>
+
 #include "printc.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "cast.hh"
+#include "cpool.hh"
+#include "database.hh"
+#include "error.hh"
+#include "float.hh"
+#include "fspec.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "stringmanage.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "typeop.hh"
+#include "userop.hh"
+#include "variable.hh"
+#include "varmap.hh"
+#include "varnode.hh"
 
 // Operator tokens for expressions
 //                        token #in prec assoc   optype       space bump

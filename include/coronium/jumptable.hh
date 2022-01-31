@@ -19,10 +19,27 @@
 #ifndef __CPUI_JUMPTABLE__
 #define __CPUI_JUMPTABLE__
 
+#include <iosfwd>
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "emulateutil.hh"
 #include "rangeutil.hh"
+#include "address.hh"
+#include "error.hh"
+#include "op.hh"
+#include "types.h"
 
 class EmulateFunction;
+class Architecture;
+class BlockBasic;
+class Element;
+class FlowBlock;
+class Funcdata;
+class Varnode;
 
 /// \brief Exception thrown for a thunk mechanism that looks like a jump-table
 struct JumptableThunkError : public LowlevelError {

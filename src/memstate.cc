@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string.h>
+#include <utility>
+
 #include "memstate.hh"
 #include "translate.hh"
+#include "address.hh"
+#include "loadimage.hh"
+#include "space.hh"
 
 /// This is a static convenience routine for decoding a value from a sequence of bytes depending
 /// on the desired endianness

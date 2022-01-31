@@ -18,8 +18,18 @@
 #ifndef __SLEIGHBASE__
 #define __SLEIGHBASE__
 
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "translate.hh"
 #include "slghsymbol.hh"
+#include "pcoderaw.hh"
+#include "types.h"
+
+class AddrSpace;
+class Element;
 
 /// \brief class for recording source file information for SLEIGH constructors.
 

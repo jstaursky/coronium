@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <istream>
+#include <memory>
+#include <type_traits>
+#include <utility>
+
 #include "translate.hh"
+#include "xml.hh"
 
 /// Read a \<truncate_space> XML tag to configure \b this object
 /// \param el is the XML element

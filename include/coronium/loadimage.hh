@@ -19,7 +19,14 @@
 #ifndef __CPUI_LOADIMAGE__
 #define __CPUI_LOADIMAGE__
 
+#include <iosfwd>
+#include <string>
+
 #include "address.hh"
+#include "error.hh"
+#include "types.h"
+
+class AddrSpace;
 
 /// \brief Exception indicating data was not available
 ///

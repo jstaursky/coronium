@@ -17,8 +17,15 @@
 /// \file bfd_arch.hh
 /// \brief Specific implementation of Architecture using GNU BFD libraries
 
+#include <iosfwd>
+#include <string>
+
 #include "sleigh_arch.hh"
 #include "loadimage_bfd.hh"
+#include "architecture.hh"
+
+class Document;
+class DocumentStorage;
 
 /// \brief Extension point for building a GNU BFD capable Architecture
 class BfdArchitectureCapability : public ArchitectureCapability {

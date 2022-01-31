@@ -19,11 +19,20 @@
 #ifndef __CPUI_COMMENT__
 #define __CPUI_COMMENT__
 
+#include <iosfwd>
+#include <map>
+#include <set>
+#include <string>
+#include <utility>
+
 #include "address.hh"
+#include "types.h"
 
 class FlowBlock;
 class PcodeOp;
 class Funcdata;
+class AddrSpaceManager;
+class Element;
 
 /// \brief A comment attached to a specific function and code address
 ///

@@ -13,8 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <string>
+#include <utility>
+
 #include "transform.hh"
 #include "funcdata.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "error.hh"
+#include "op.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "varnode.hh"
+#include "xml.hh"
+
+class AddrSpaceManager;
 
 /// \param op2 is the lane description to copy from
 LaneDescription::LaneDescription(const LaneDescription &op2)

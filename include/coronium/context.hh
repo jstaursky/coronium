@@ -16,8 +16,16 @@
 #ifndef __CONTEXT__
 #define __CONTEXT__
 
+#include <string>
+#include <vector>
+
 #include "globalcontext.hh"
 #include "opcodes.hh"
+#include "address.hh"
+#include "error.hh"
+#include "types.h"
+
+class AddrSpace;
 
 class Token {			// A multiple-byte sized chunk of pattern in a bitstream
   string name;
@@ -43,6 +51,7 @@ struct FixedHandle {		// A handle that is fully resolved
 };
 
 class Constructor;
+
 struct ConstructState {
   Constructor *ct;
   FixedHandle hand;
@@ -53,6 +62,7 @@ struct ConstructState {
 };
 
 class TripleSymbol;
+
 struct ContextSet {		// Instructions for setting a global context value
   TripleSymbol *sym;		// Resolves to address where setting takes effect
   ConstructState *point;	// Point at which context set was made

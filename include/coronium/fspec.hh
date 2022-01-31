@@ -19,10 +19,32 @@
 #ifndef __CPUI_FSPEC__
 #define __CPUI_FSPEC__
 
+#include <algorithm>
+#include <iosfwd>
+#include <list>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "op.hh"
 #include "rangemap.hh"
+#include "address.hh"
+#include "error.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "type.hh"
+#include "types.h"
 
 class JoinRecord;
+class AddrSpaceManager;
+class Architecture;
+class Element;
+class Funcdata;
+class PcodeOp;
+class Scope;
+class Translate;
+class Varnode;
 
 /// \brief Exception thrown when a prototype can't be modeled properly
 struct ParamUnassignedError : public LowlevelError {

@@ -13,9 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <istream>
+#include <list>
+#include <utility>
+
 #include "jumptable.hh"
-#include "emulate.hh"
 #include "flow.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "dynamic.hh"
+#include "funcdata.hh"
+#include "loadimage.hh"
+#include "memstate.hh"
+#include "opbehavior.hh"
+#include "opcodes.hh"
+#include "override.hh"
+#include "pcodeinject.hh"
+#include "space.hh"
+#include "typeop.hh"
+#include "userop.hh"
+#include "varnode.hh"
+#include "xml.hh"
 
 /// \param s is the XML stream to write to
 void LoadTable::saveXml(ostream &s) const

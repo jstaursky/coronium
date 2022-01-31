@@ -20,7 +20,16 @@
 #ifndef __CPUI_DYNAMIC__
 #define __CPUI_DYNAMIC__
 
+#include <vector>
+
 #include "varnode.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "types.h"
+
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 /// \brief An edge between a Varnode and a PcodeOp
 ///

@@ -19,9 +19,21 @@
 #ifndef __OVERRIDE__
 #define __OVERRIDE__
 
+#include <iosfwd>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "database.hh"
+#include "address.hh"
+#include "types.h"
 
 class FuncCallSpecs;		// Forward declaration
+class AddrSpace;
+class Architecture;
+class Element;
+class FuncProto;
+class Funcdata;
 
 /// \brief A container of commands that override the decompiler's default behavior for a single function
 ///

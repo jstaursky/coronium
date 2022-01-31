@@ -18,9 +18,11 @@
 #ifndef __CAPABILITY__
 #define __CAPABILITY__
 
-#include "types.h"
 #include <vector>
 #include <string>
+#include <iosfwd>
+
+#include "types.h"
 
 using namespace std;
 

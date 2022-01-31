@@ -13,9 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ctype.h>
+#include <ext/alloc_traits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <csignal>
+#include <algorithm>
+#include <set>
+#include <type_traits>
+#include <utility>
+
 #include "slgh_compile.hh"
 #include "filemanage.hh"
-#include <csignal>
+#include "context.hh"
+#include "error.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "slghpatexpress.hh"
+#include "space.hh"
+#include "xml.hh"
 
 SleighCompile *slgh;		// Global pointer to sleigh object for use with parser
 #ifdef YYDEBUG

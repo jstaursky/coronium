@@ -19,9 +19,22 @@
 #ifndef __SLEIGH_ARCH__
 #define __SLEIGH_ARCH__
 
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "filemanage.hh"
 #include "architecture.hh"
 #include "sleigh.hh"
+#include "translate.hh"
+#include "types.h"
+
+class DocumentStorage;
+class Element;
+class FileManage;
+class PcodeInjectLibrary;
+class Sleigh;
 
 /// \brief Contents of a \<compiler> tag in a .ldefs file
 ///

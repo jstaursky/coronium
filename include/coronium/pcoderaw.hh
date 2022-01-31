@@ -18,8 +18,16 @@
 #ifndef __CPUI_PCODERAW__
 #define __CPUI_PCODERAW__
 
+#include <vector>
+
 #include "address.hh"
 #include "opbehavior.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "types.h"
+
+class AddrSpaceManager;
+class Element;
 
 /// \brief Data defining a specific memory location
 ///

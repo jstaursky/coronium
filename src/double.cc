@@ -13,7 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <list>
+#include <memory>
+
 #include "double.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "database.hh"
+#include "error.hh"
+#include "funcdata.hh"
+#include "op.hh"
+#include "space.hh"
+#include "varnode.hh"
 
 SplitVarnode::SplitVarnode(int4 sz,uintb v)
 

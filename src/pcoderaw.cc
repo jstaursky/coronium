@@ -13,8 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string>
+
 #include "pcoderaw.hh"
 #include "translate.hh"
+#include "error.hh"
+#include "xml.hh"
 
 /// Build this VarnodeData from an \b \<addr\> tag
 /// \param el is the parsed tag

@@ -16,11 +16,28 @@
 /// \file slgh_compile.hh
 /// \brief High-level control of the sleigh compilation process
 
+#include <iostream>
+#include <sstream>
+#include <list>
+#include <map>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "sleighbase.hh"
 #include "pcodecompile.hh"
 #include "filemanage.hh"
-#include <iostream>
-#include <sstream>
+#include "address.hh"
+#include "semantics.hh"
+#include "slghsymbol.hh"
+#include "types.h"
+
+class AssemblyEmit;
+class DocumentStorage;
+class PatternEquation;
+class PatternExpression;
+class PcodeEmit;
+class Token;
 
 /// \brief A helper class to associate a \e named Constructor section with its symbol scope
 ///

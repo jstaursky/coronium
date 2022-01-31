@@ -13,7 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <istream>
+#include <memory>
+#include <set>
+#include <utility>
+
 #include "sleighbase.hh"
+#include "context.hh"
+#include "error.hh"
+#include "float.hh"
+#include "slghpatexpress.hh"
+#include "space.hh"
+#include "xml.hh"
 
 const int4 SleighBase::SLA_FORMAT_VERSION = 3;
 

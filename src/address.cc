@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <vector>
+
 #include "address.hh"
 #include "translate.hh"
+#include "error.hh"
+#include "pcoderaw.hh"
+#include "xml.hh"
 
 ostream &operator<<(ostream &s,const SeqNum &sq)
 

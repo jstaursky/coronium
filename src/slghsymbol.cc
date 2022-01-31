@@ -13,9 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <stddef.h>
+#include <cmath>
+#include <istream>
+#include <memory>
+
 #include "slghsymbol.hh"
 #include "sleighbase.hh"
-#include <cmath>
+#include "address.hh"
+#include "error.hh"
+#include "slghpattern.hh"
+#include "translate.hh"
+#include "xml.hh"
 
 SleighSymbol *SymbolScope::addSymbol(SleighSymbol *a)
 

@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+
 #include "semantics.hh"
 #include "translate.hh"
+#include "address.hh"
+#include "error.hh"
+#include "space.hh"
+#include "xml.hh"
 
 ConstTpl::ConstTpl(const_type tp)
 

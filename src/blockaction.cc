@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <utility>
+
 #include "blockaction.hh"
 #include "funcdata.hh"
+#include "block.hh"
+#include "error.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "varnode.hh"
 
 /// Retrieve the current edge (as a \e top FlowBlock and the index of the outgoing edge).
 /// If the end-points have been collapsed together, this returns NULL.

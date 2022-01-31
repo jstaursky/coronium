@@ -20,9 +20,12 @@
 #define __CPUI_CAST__
 
 #include "type.hh"
+#include "types.h"
 
 class Varnode;
 class PcodeOp;
+class Datatype;
+class TypeFactory;
 
 /// \brief A strategy for applying type casts
 ///

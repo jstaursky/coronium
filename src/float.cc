@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "float.hh"
 #include <sstream>
 #include <cmath>
+
+#include "float.hh"
 #include "address.hh"
+#include "xml.hh"
 
 /// Set format for a given encoding size according to IEEE 754 standards
 /// \param sz is the size of the encoding in bytes

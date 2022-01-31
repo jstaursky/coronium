@@ -13,9 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ostream>
+
 #include "typeop.hh"
 #include "funcdata.hh"
-#include <cmath>
+#include "address.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "cast.hh"
+#include "cpool.hh"
+#include "database.hh"
+#include "fspec.hh"
+#include "op.hh"
+#include "space.hh"
+#include "userop.hh"
+#include "variable.hh"
+#include "varnode.hh"
 
 /// \param inst will hold the array of TypeOp objects, indexed on op-code
 /// \param tlst is the corresponding TypeFactory for the Architecture

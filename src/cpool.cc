@@ -13,7 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+#include <istream>
+#include <tuple>
+#include <utility>
+
 #include "cpool.hh"
+#include "error.hh"
+#include "type.hh"
+#include "xml.hh"
 
 /// Save the constant pool object description as a \<cpoolrec> tag.
 /// \param s is the output stream

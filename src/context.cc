@@ -13,9 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <memory>
+
 #include "context.hh"
 #include "slghsymbol.hh"
 #include "translate.hh"
+#include "space.hh"
 
 ParserContext::ParserContext(ContextCache *ccache)
 

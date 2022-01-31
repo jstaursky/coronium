@@ -16,8 +16,25 @@
 #ifndef __INJECT_SLEIGH__
 #define __INJECT_SLEIGH__
 
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "pcodeinject.hh"
 #include "sleigh.hh"
+#include "address.hh"
+#include "types.h"
+
+class Architecture;
+class ConstructTpl;
+class Document;
+class Element;
+class OpBehavior;
+class ParserContext;
+class ParserWalkerChange;
+class PcodeEmit;
+class SleighBase;
 
 class InjectContextSleigh : public InjectContext {
 public:

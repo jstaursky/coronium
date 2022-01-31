@@ -13,8 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <utility>
+
 #include "op.hh"
-#include "funcdata.hh"
+#include "block.hh"
+#include "error.hh"
+#include "varnode.hh"
+#include "xml.hh"
+
+class AddrSpaceManager;
+class SymbolEntry;
+class Translate;
 
 const string IopSpace::NAME = "iop";
 

@@ -16,8 +16,17 @@
 #ifndef __PCODE_SNIPPET__
 #define __PCODE_SNIPPET__
 
+#include <ctype.h>
+#include <iosfwd>
+#include <string>
+
 #include "pcodecompile.hh"
 #include "sleighbase.hh"
+#include "slghsymbol.hh"
+#include "types.h"
+
+class ConstructTpl;
+class SleighBase;
 
 // Classes for compiling a standalone snippet of pcode, given an existing sleigh language
 

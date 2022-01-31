@@ -13,10 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <list>
+#include <ostream>
+#include <utility>
+
 #include "ruleaction.hh"
 #include "coreaction.hh"
 #include "subflow.hh"
 #include "rangeutil.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "cpool.hh"
+#include "database.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "funcdata.hh"
+#include "heritage.hh"
+#include "jumptable.hh"
+#include "op.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "stringmanage.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "typeop.hh"
+#include "userop.hh"
+#include "varnode.hh"
 
 /// \class RuleEarlyRemoval
 /// \brief Get rid of unused PcodeOp objects where we can guarantee the output is unused

@@ -18,7 +18,24 @@
 #ifndef __CPUI_OP__
 #define __CPUI_OP__
 
+#include <list>
+#include <map>
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "typeop.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "types.h"
+
+class AddrSpaceManager;
+class BlockBasic;
+class Datatype;
+class Element;
+class Translate;
+class Varnode;
 
 /// \brief Space for storing internal PcodeOp pointers as addresses
 ///

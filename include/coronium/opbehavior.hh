@@ -18,8 +18,12 @@
 #ifndef __CPUI_OPBEHAVIOR__
 #define __CPUI_OPBEHAVIOR__
 
+#include <string>
+#include <vector>
+
 #include "error.hh"
 #include "opcodes.hh"
+#include "types.h"
 
 class Translate;		// Forward declaration
 

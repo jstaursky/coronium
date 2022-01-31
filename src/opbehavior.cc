@@ -15,6 +15,8 @@
  */
 #include "opbehavior.hh"
 #include "translate.hh"
+#include "address.hh"
+#include "float.hh"
 
 /// This routine generates a vector of OpBehavior objects indexed by opcode
 /// \param inst is the vector of behaviors to be filled

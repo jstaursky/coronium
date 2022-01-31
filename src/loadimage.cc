@@ -13,7 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <string.h>
+#include <istream>
+
 #include "loadimage.hh"
+#include "space.hh"
 
 /// This is a convenience method wrapped around the core
 /// loadFill() routine.  It automatically allocates an array

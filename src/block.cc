@@ -14,8 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <istream>
+
 #include "block.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "error.hh"
+#include "op.hh"
+#include "variable.hh"
+#include "varnode.hh"
+
+class AddrSpaceManager;
+class Datatype;
 
 /// The edge is saved assuming we already know what block we are in
 /// \param s is the output stream

@@ -13,8 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ostream>
+
 #include "rangeutil.hh"
 #include "block.hh"
+#include "op.hh"
+
+class SymbolEntry;
 
 const char CircleRange::arrange[] = "gcgbegdagggggggeggggcgbggggggggcdfgggggggegdggggbgggfggggcgbegda";
 

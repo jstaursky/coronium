@@ -19,9 +19,27 @@
 #ifndef __SLEIGH__
 #define __SLEIGH__
 
+#include <list>
+#include <string>
+#include <vector>
+
 #include "sleighbase.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "semantics.hh"
+#include "types.h"
 
 class LoadImage;
+class AddrSpace;
+class AssemblyEmit;
+class Constructor;
+class ContextCache;
+class ContextDatabase;
+class DocumentStorage;
+class ParserContext;
+class ParserWalker;
+class PcodeEmit;
 
 /// \brief Class for describing a relative p-code branch destination
 ///

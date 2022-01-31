@@ -19,10 +19,14 @@
 #ifndef __ARCH_OPTIONS__
 #define __ARCH_OPTIONS__
 
+#include <map>
+#include <string>
+
 #include "error.hh"
 #include "xml.hh"
 
 class Architecture;
+class Element;
 
 /// \brief Base class for options classes that affect the configuration of the Architecture object
 ///

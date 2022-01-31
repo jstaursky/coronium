@@ -21,8 +21,23 @@
 #ifndef __CPUI_TRANSLATE__
 #define __CPUI_TRANSLATE__
 
+#include <iosfwd>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "pcoderaw.hh"
 #include "float.hh"
+#include "address.hh"
+#include "error.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "types.h"
+
+class AddrSpaceManager;
+class DocumentStorage;
+class Element;
 
 // Some errors specific to the translation unit
 

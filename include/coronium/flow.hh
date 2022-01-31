@@ -19,7 +19,22 @@
 #ifndef __CPUI_FLOW__
 #define __CPUI_FLOW__
 
+#include <list>
+#include <map>
+#include <set>
+#include <vector>
+
 #include "funcdata.hh"
+#include "address.hh"
+#include "types.h"
+
+class Architecture;
+class BlockGraph;
+class FuncCallSpecs;
+class InjectContext;
+class InjectPayload;
+class PcodeOp;
+class PcodeOpBank;
 
 /// \brief A class for generating the control-flow structure for a single function
 ///

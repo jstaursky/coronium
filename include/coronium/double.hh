@@ -16,8 +16,22 @@
 #ifndef __CPUI_DOUBLE__
 #define __CPUI_DOUBLE__
 
+#include <string>
+#include <vector>
+
 #include "ruleaction.hh"
 #include "funcdata.hh"
+#include "action.hh"
+#include "opcodes.hh"
+#include "types.h"
+
+class AddrSpace;
+class Address;
+class BlockBasic;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 class SplitVarnode {
   Varnode *lo;			// Least significant piece of the double precision object

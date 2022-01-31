@@ -16,7 +16,17 @@
 #ifndef __SEMANTICS__
 #define __SEMANTICS__
 
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "context.hh"
+#include "opcodes.hh"
+#include "types.h"
+
+class AddrSpace;
+class AddrSpaceManager;
+class Element;
 
 // We remap these opcodes for internal use during pcode generation
 
@@ -28,6 +38,7 @@
 
 class Translate;		// Forward declaration
 class HandleTpl;		// Forward declaration
+
 class ConstTpl {
 public:
   enum const_type { real=0, handle=1, j_start=2, j_next=3, j_curspace=4, 

@@ -13,8 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <memory>
+#include <ostream>
+
 #include "sleigh.hh"
 #include "loadimage.hh"
+#include "context.hh"
+#include "error.hh"
+#include "globalcontext.hh"
+#include "slghpatexpress.hh"
+#include "slghsymbol.hh"
+#include "space.hh"
+#include "translate.hh"
+#include "xml.hh"
 
 PcodeCacher::PcodeCacher(void)
 

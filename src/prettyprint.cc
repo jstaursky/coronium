@@ -14,7 +14,14 @@
  * limitations under the License.
  */
 #include "prettyprint.hh"
-#include "funcdata.hh"
+#include "block.hh"
+#include "database.hh"
+#include "error.hh"
+#include "op.hh"
+#include "space.hh"
+#include "type.hh"
+#include "varnode.hh"
+#include "xml.hh"
 
 const char *EmitXml::highlight[] = { "color=\"keyword\"",
 					      "color=\"comment\"",

@@ -24,9 +24,34 @@
 #ifndef __CORE_ACTION__
 #define __CORE_ACTION__
 
+#include <list>
+#include <map>
+#include <string>
+#include <vector>
+
 #include "ruleaction.hh"
 #include "blockaction.hh"
 #include "funcdata.hh"
+#include "action.hh"
+#include "address.hh"
+#include "merge.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "types.h"
+#include "varnode.hh"
+
+class AddrSpace;
+class BlockBasic;
+class CastStrategy;
+class Datatype;
+class FlowBlock;
+class FuncCallSpecs;
+class HighVariable;
+class LanedRegister;
+class ParamActive;
+class ProtoParameter;
+class SymbolEntry;
+class TypeFactory;
 
 /// \brief Gather raw p-code for a function.
 class ActionStart : public Action {

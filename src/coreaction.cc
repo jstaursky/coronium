@@ -13,10 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <memory>
+#include <ostream>
+#include <set>
+#include <utility>
+
 #include "coreaction.hh"
 #include "condexe.hh"
 #include "double.hh"
 #include "subflow.hh"
+#include "architecture.hh"
+#include "block.hh"
+#include "blockaction.hh"
+#include "cast.hh"
+#include "cover.hh"
+#include "database.hh"
+#include "dynamic.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "globalcontext.hh"
+#include "jumptable.hh"
+#include "override.hh"
+#include "pcodeinject.hh"
+#include "pcoderaw.hh"
+#include "printlanguage.hh"
+#include "ruleaction.hh"
+#include "space.hh"
+#include "transform.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "typeop.hh"
+#include "userop.hh"
+#include "variable.hh"
+#include "varmap.hh"
 
 /// \brief A stack equation
 struct StackEqn {

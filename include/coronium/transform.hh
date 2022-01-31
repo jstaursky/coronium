@@ -18,9 +18,20 @@
 #ifndef __TRANSFORM__
 #define __TRANSFORM__
 
+#include <list>
+#include <map>
+#include <vector>
+
 #include "varnode.hh"
+#include "opcodes.hh"
+#include "types.h"
+
 class Funcdata;			// Forward declaration
 class TransformOp;
+class AddrSpaceManager;
+class Element;
+class PcodeOp;
+class Varnode;
 
 /// \brief Placeholder node for Varnode that will exist after a transform is applied to a function
 class TransformVar {

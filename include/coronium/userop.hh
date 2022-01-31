@@ -19,7 +19,21 @@
 #ifndef __CPUI_USEROP__
 #define __CPUI_USEROP__
 
+#include <map>
+#include <string>
+#include <vector>
+
 #include "typeop.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "types.h"
+
+class AddrSpace;
+class Architecture;
+class Element;
+class Funcdata;
+class PcodeOp;
+class Varnode;
 
 /// \brief The base class for a detailed definition of a user-defined p-code operation
 ///

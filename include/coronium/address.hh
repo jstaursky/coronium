@@ -26,9 +26,15 @@
 #ifndef __CPUI_ADDR__
 #define __CPUI_ADDR__
 
+#include <ostream>
+#include <set>
+#include <string>
+
 #include "space.hh"
+#include "types.h"
 
 class AddrSpaceManager;
+class Element;
 
 /// \brief A low-level machine address for labelling bytes and data.
 ///

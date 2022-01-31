@@ -13,7 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "globalcontext.hh"
+#include "error.hh"
+#include "space.hh"
+#include "xml.hh"
+
+class AddrSpaceManager;
 
 /// Bits within the whole context blob are labeled starting with 0 as the most significant bit
 /// in the first word in the sequence. The new context value must be contained within a single

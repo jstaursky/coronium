@@ -13,8 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <memory>
+#include <utility>
+
 #include "sleigh_arch.hh"
 #include "inject_sleigh.hh"
+#include "context.hh"
+#include "error.hh"
+#include "filemanage.hh"
+#include "loadimage.hh"
+#include "sleigh.hh"
+#include "xml.hh"
+
+class PcodeInjectLibrary;
 
 map<int4,Sleigh *> SleighArchitecture::translators;
 vector<LanguageDescription> SleighArchitecture::description;

@@ -16,7 +16,18 @@
 #ifndef __SLGHPATEXPRESS__
 #define __SLGHPATEXPRESS__
 
+#include <ostream>
+#include <string>
+#include <vector>
+
 #include "slghpattern.hh"
+#include "address.hh"
+#include "context.hh"
+#include "space.hh"
+#include "types.h"
+
+class Element;
+class Translate;
 
 class TokenPattern {
   Pattern *pattern;
@@ -53,6 +64,7 @@ public:
 };
 
 class PatternValue;
+
 class PatternExpression {
   int4 refcount;			// Number of objects referencing this
 				// for deletion
@@ -167,6 +179,7 @@ public:
 
 class Constructor;		// Forward declaration
 class OperandSymbol;
+
 class OperandValue : public PatternValue {
   int4 index;			// This is the defining field of expression
   Constructor *ct;		// cached pointer to constructor

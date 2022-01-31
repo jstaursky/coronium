@@ -13,8 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+#include <stdlib.h>
+#include <iomanip>
+#include <istream>
+#include <memory>
+#include <vector>
+
 #include "space.hh"
 #include "translate.hh"
+#include "address.hh"
+#include "pcoderaw.hh"
+#include "xml.hh"
 
 /// Calculate \e highest based on \e addressSize, and \e wordsize.
 /// This also calculates the default pointerLowerBound

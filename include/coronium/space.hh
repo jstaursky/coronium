@@ -19,8 +19,14 @@
 #ifndef __CPUI_SPACE__
 #define __CPUI_SPACE__
 
+#include <iosfwd>
+#include <string>
+
 #include "error.hh"
 #include "xml.hh"
+#include "types.h"
+
+class Element;
 
 /// \brief Fundemental address space types
 ///

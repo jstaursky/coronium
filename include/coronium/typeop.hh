@@ -19,13 +19,22 @@
 #ifndef __CPUI_TYPEOP__
 #define __CPUI_TYPEOP__
 
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "cpool.hh"
 #include "variable.hh"
 #include "opbehavior.hh"
 #include "printlanguage.hh"
+#include "opcodes.hh"
+#include "type.hh"
+#include "types.h"
 
 class PcodeOp;
 class Translate;
+class CastStrategy;
+class ConstantPool;
 
 /// \brief Associate data-type and behavior information with a specific p-code op-code.
 ///

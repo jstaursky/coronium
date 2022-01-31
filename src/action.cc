@@ -13,10 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+#include <ostream>
+#include <utility>
+
 #include "action.hh"
 #include "funcdata.hh"
-
-#include "coreaction.hh"
+#include "address.hh"
+#include "architecture.hh"
+#include "error.hh"
 
 /// Specify the name, group, and properties of the Action
 /// \param f is the collection of property flags

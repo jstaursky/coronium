@@ -13,8 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ctype.h>
+#include <algorithm>
+#include <iomanip>
+#include <istream>
+#include <utility>
+
 #include "type.hh"
 #include "funcdata.hh"
+#include "architecture.hh"
+#include "database.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "pcoderaw.hh"
+#include "varmap.hh"
+#include "xml.hh"
 
 /// The base propagation ordering associated with each meta-type.
 /// The array elements correspond to the ordering of #type_metatype.

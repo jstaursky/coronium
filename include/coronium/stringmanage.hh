@@ -19,9 +19,18 @@
 #ifndef __STRING_MANAGE__
 #define __STRING_MANAGE__
 
+#include <iosfwd>
+#include <map>
+#include <vector>
+
 #include "type.hh"
+#include "address.hh"
+#include "types.h"
 
 class Architecture;
+class AddrSpaceManager;
+class Datatype;
+class Element;
 
 /// \brief Storage for decoding and storing strings associated with an address
 ///

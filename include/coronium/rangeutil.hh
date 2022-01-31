@@ -18,7 +18,20 @@
 #ifndef __RANGEUTIL__
 #define __RANGEUTIL__
 
+#include <iosfwd>
+#include <list>
+#include <map>
+#include <memory>
+#include <utility>
+#include <vector>
+
 #include "op.hh"
+#include "address.hh"
+#include "opcodes.hh"
+#include "types.h"
+#include "varnode.hh"
+
+class PcodeOp;
 
 /// \brief A class for manipulating integer value ranges.
 ///

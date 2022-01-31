@@ -13,8 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+#include <istream>
+#include <string>
+#include <utility>
+
 #include "stringmanage.hh"
 #include "architecture.hh"
+#include "error.hh"
+#include "loadimage.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "xml.hh"
 
 /// \param max is the maximum number of characters to allow before truncating string
 StringManager::StringManager(int4 max)

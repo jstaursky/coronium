@@ -13,8 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ostream>
+#include <vector>
+
 #include "comment.hh"
 #include "funcdata.hh"
+#include "block.hh"
+#include "error.hh"
+#include "op.hh"
+#include "space.hh"
+#include "xml.hh"
+
+class AddrSpaceManager;
 
 /// \param tp is the set of properties to associate with the comment (or 0 for no properties)
 /// \param fad is the Address of the function containing the comment

@@ -16,7 +16,19 @@
 #ifndef __PCODE_COMPILE__
 #define __PCODE_COMPILE__
 
+#include <string>
+#include <vector>
+
 #include "slghsymbol.hh"
+#include "opcodes.hh"
+#include "semantics.hh"
+#include "types.h"
+
+class AddrSpace;
+class LabelSymbol;
+class SleighSymbol;
+class SpecificSymbol;
+class UserOpSymbol;
 
 class Location {
   string filename;

@@ -20,6 +20,7 @@
 #define __CPUI_OPCODES__
 
 #include <string>
+#include <iosfwd>
 
 using namespace std;
 

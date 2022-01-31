@@ -13,8 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <list>
+#include <ostream>
+#include <utility>
+
 #include "cover.hh"
 #include "block.hh"
+#include "address.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "varnode.hh"
 
 const CoverBlock Cover::emptyBlock;
 

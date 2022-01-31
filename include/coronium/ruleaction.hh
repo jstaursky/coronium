@@ -25,7 +25,23 @@
 #ifndef __RULE_ACTION__
 #define __RULE_ACTION__
 
+#include <string>
+#include <vector>
+
 #include "action.hh"
+#include "opcodes.hh"
+#include "types.h"
+
+class AddrSpace;
+class Architecture;
+class BlockBasic;
+class Datatype;
+class FlowBlock;
+class Funcdata;
+class PcodeOp;
+class TypePointer;
+class TypePointerRel;
+class Varnode;
 
 /// \brief Structure for sorting out pointer expression trees
 ///

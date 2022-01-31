@@ -13,7 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ostream>
+
 #include "pcodecompile.hh"
+#include "context.hh"
+#include "slghsymbol.hh"
+#include "space.hh"
 
 string Location::format(void) const
 

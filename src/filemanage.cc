@@ -14,6 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <ext/alloc_traits.h>
+
 #include "filemanage.hh"
 
 #ifdef _WINDOWS
@@ -23,7 +25,6 @@
 // POSIX functions for searching directories
 extern "C" {
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
 }

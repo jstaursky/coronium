@@ -13,8 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+
 #include "slghpatexpress.hh"
 #include "sleighbase.hh"
+#include "slghsymbol.hh"
+#include "xml.hh"
+
+class Translate;
 
 int4 TokenPattern::resolveTokens(const TokenPattern &tok1,const TokenPattern &tok2)
 

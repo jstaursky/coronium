@@ -13,7 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <memory>
+#include <utility>
+
 #include "subflow.hh"
+#include "architecture.hh"
+#include "float.hh"
+#include "fspec.hh"
+#include "funcdata.hh"
+#include "op.hh"
+#include "space.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "varnode.hh"
 
 /// \brief Return \e slot of constant if INT_OR op sets all bits in mask, otherwise -1
 ///

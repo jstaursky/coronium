@@ -16,10 +16,23 @@
 #ifndef __SLGHSYMBOL__
 #define __SLGHSYMBOL__
 
+#include <iosfwd>
+#include <set>
+#include <string>
+#include <utility>
+#include <vector>
+
 #include "semantics.hh"
 #include "slghpatexpress.hh"
+#include "context.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "types.h"
 
 class SleighBase;		// Forward declaration
+class DisjointPattern;
+class Element;
+
 class SleighSymbol {
   friend class SymbolTable;
 public:
@@ -142,6 +155,7 @@ public:
 };
 
 class Constructor;		// Forward declaration
+
 // This is the central sleigh object
 class TripleSymbol : public SleighSymbol {
 public:
@@ -463,6 +477,7 @@ public:
 };
 
 class SubtableSymbol;
+
 class Constructor {		// This is NOT a symbol
   TokenPattern *pattern;
   SubtableSymbol *parent;

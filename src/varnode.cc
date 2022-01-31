@@ -13,8 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <iomanip>
+#include <ostream>
+#include <string>
+#include <utility>
+
 #include "varnode.hh"
 #include "funcdata.hh"
+#include "cover.hh"
+#include "database.hh"
+#include "error.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "variable.hh"
+#include "xml.hh"
 
 /// Compare by location then by definition.
 /// This is the same as the normal varnode compare, but we distinguish identical frees by their

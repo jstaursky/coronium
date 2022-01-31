@@ -13,10 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <utility>
+#include <vector>
+
 #include "options.hh"
 #include "funcdata.hh"
 #include "flow.hh"
 #include "printc.hh"
+#include "action.hh"
+#include "architecture.hh"
+#include "comment.hh"
+#include "database.hh"
+#include "error.hh"
+#include "fspec.hh"
+#include "printlanguage.hh"
+#include "translate.hh"
+#include "type.hh"
+#include "types.h"
+#include "xml.hh"
 
 /// If the parameter is "on" return \b true, if "off" return \b false.
 /// Any other value causes an exception.

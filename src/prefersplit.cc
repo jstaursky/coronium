@@ -14,8 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <list>
+#include <set>
+
 #include "prefersplit.hh"
 #include "funcdata.hh"
+#include "address.hh"
+#include "op.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "varnode.hh"
 
 bool PreferSplitRecord::operator<(const PreferSplitRecord &op2) const
 

@@ -13,9 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <algorithm>
+#include <string>
+
 #include "variable.hh"
 #include "op.hh"
 #include "database.hh"
+#include "address.hh"
+#include "error.hh"
+#include "opcodes.hh"
+#include "space.hh"
+#include "type.hh"
+#include "xml.hh"
 
 /// The new instance starts off with no associate Symbol and all properties marked as \e dirty.
 /// \param vn is the single Varnode member

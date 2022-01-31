@@ -13,7 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <utility>
+
 #include "emulate.hh"
+#include "error.hh"
+#include "memstate.hh"
+#include "opbehavior.hh"
+#include "pcoderaw.hh"
+#include "space.hh"
 
 /// Any time the emulator is about to execute a user-defined pcode op with the given name,
 /// the indicated breakpoint is invoked first. The break table does \e not assume responsibility

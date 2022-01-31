@@ -23,9 +23,22 @@
 #ifndef __CPUI_DATABASE__
 #define __CPUI_DATABASE__
 
+#include <ext/alloc_traits.h>
+#include <iosfwd>
+#include <list>
+#include <map>
+#include <set>
+#include <string>
+#include <vector>
+
 #include "variable.hh"
 #include "partmap.hh"
 #include "rangemap.hh"
+#include "address.hh"
+#include "space.hh"
+#include "types.h"
+#include "varnode.hh"
+#include "xml.hh"
 
 class Architecture;
 class Funcdata;
@@ -33,6 +46,8 @@ class Scope;
 class Database;
 class Symbol;
 class PrintLanguage;
+class AddrSpaceManager;
+class Datatype;
 
 /// \brief A storage location for a particular Symbol
 ///

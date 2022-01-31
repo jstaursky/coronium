@@ -19,8 +19,16 @@
 #ifndef __LOADIMAGE_BFD__
 #define __LOADIMAGE_BFD__
 
-#include "loadimage.hh"
 #include <bfd.h>
+#include <string>
+#include <vector>
+
+#include "loadimage.hh"
+#include "address.hh"
+#include "error.hh"
+#include "types.h"
+
+class AddrSpace;
 
 struct ImportRecord {
   string dllname;

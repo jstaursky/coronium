@@ -14,7 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <istream>
+#include <vector>
+
 #include "bfd_arch.hh"
+#include "error.hh"
+#include "loadimage.hh"
+#include "loadimage_bfd.hh"
+#include "type.hh"
+#include "types.h"
+#include "xml.hh"
 
 // Constructing this object registers capability
 BfdArchitectureCapability BfdArchitectureCapability::bfdArchitectureCapability;
