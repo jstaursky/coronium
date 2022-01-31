@@ -65,6 +65,13 @@ After install you can link to targets with headers such as
 
 via the cmdline -- =g++ main.cpp -lcoronium -o main=
 
+** Dependencies
+At the moment you will need to install =libbfd=, which you can do by
+#+begin_src shell
+  apt install binutils-dev
+#+end_src
+This dependency will soon be optional.
+
 ** Updating to latest the ghidra source code
 The convenience script =update_ghidra_src.py= can be used to ensure that
 coronium uses the latest and greatest source code directly from the official

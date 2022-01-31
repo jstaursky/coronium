@@ -1,99 +1,102 @@
 target_sources(
   slgh-compile
   PRIVATE
-    address.cc
-    ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
-    ${CMAKE_BINARY_DIR}/src/slghparse.cc
-    ${CMAKE_BINARY_DIR}/src/slghscan.cc
-    ${CMAKE_BINARY_DIR}/src/xml.cc
-    context.cc
-    filemanage.cc
-    float.cc
-    globalcontext.cc
-    opcodes.cc
-    pcodecompile.cc
-    pcoderaw.cc
-    semantics.cc
-    sleighbase.cc
-    sleigh.cc
-    slgh_compile.cc
-    slghpatexpress.cc
-    slghpattern.cc
-    slghsymbol.cc
-    space.cc
-    translate.cc
+  ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
+  ${CMAKE_BINARY_DIR}/src/slghparse.cc
+  ${CMAKE_BINARY_DIR}/src/slghscan.cc
+  ${CMAKE_BINARY_DIR}/src/xml.cc
+  address.cc
+  context.cc
+  filemanage.cc
+  float.cc
+  globalcontext.cc
+  opcodes.cc
+  pcodecompile.cc
+  pcoderaw.cc
+  semantics.cc
+  sleighbase.cc
+  sleigh.cc
+  slgh_compile.cc
+  slghpatexpress.cc
+  slghpattern.cc
+  slghsymbol.cc
+  space.cc
+  translate.cc
 )
 
 target_sources(
   coronium
   PRIVATE
-    address.cc
-    ${CMAKE_BINARY_DIR}/src/xml.cc
-    context.cc
-    emulate.cc
-    filemanage.cc
-    float.cc
-    globalcontext.cc
-    loadimage.cc
-    memstate.cc
-    opbehavior.cc
-    opcodes.cc
-    pcodecompile.cc
-    pcoderaw.cc
-    semantics.cc
-    sleighbase.cc
-    sleigh.cc
-    slghpatexpress.cc
-    slghpattern.cc
-    slghsymbol.cc
-    space.cc
-    translate.cc
-    # NEW
+  ${CMAKE_BINARY_DIR}/src/xml.cc
+  action.cc
+  address.cc
+  architecture.cc
+  blockaction.cc
+  block.cc
+  capability.cc
+  cast.cc
+  comment.cc
+  condexe.cc
+  context.cc
+  coreaction.cc
+  cover.cc
+  cpool.cc
+  crc32.cc
+  database.cc
+  double.cc
+  dynamic.cc
+  emulate.cc
+  emulateutil.cc
+  filemanage.cc
+  float.cc
+  flow.cc
+  fspec.cc
+  funcdata.cc
+  globalcontext.cc
+  heritage.cc
+  inject_sleigh.cc
+  jumptable.cc
+  loadimage.cc
+  memstate.cc
+  merge.cc
+  opbehavior.cc
+  op.cc
+  opcodes.cc
+  options.cc
+  override.cc
+  pcodecompile.cc
+  pcodeinject.cc
+  pcoderaw.cc
+  prefersplit.cc
+  prettyprint.cc
+  printc.cc
+  rangeutil.cc
+  ruleaction.cc
+  semantics.cc
+  sleigh_arch.cc
+  sleighbase.cc
+  sleigh.cc
+  slghpatexpress.cc
+  slghpattern.cc
+  slghsymbol.cc
+  space.cc
+  stringmanage.cc
+  subflow.cc
+  transform.cc
+  translate.cc
+  type.cc
+  typeop.cc
+  userop.cc
+  variable.cc
+  varmap.cc
+  varnode.cc
+)
+
+if(BFD)
+  target_sources(
+    coronium
+    PRIVATE
     bfd_arch.cc
     loadimage_bfd.cc
-    sleigh_arch.cc
-    architecture.cc
-    capability.cc
-    varmap.cc
-    database.cc
-    variable.cc
-    varnode.cc
-    coreaction.cc
-    cover.cc
-    type.cc
-
-    ruleaction.cc
-    op.cc
-    action.cc
-    funcdata.cc
-    typeop.cc
-    block.cc
-    cpool.cc
-    jumptable.cc
-    emulateutil.cc
-    cast.cc
-    prettyprint.cc
-    rangeutil.cc
-    pcodeinject.cc
-    blockaction.cc
-    fspec.cc
-    comment.cc
-    stringmanage.cc
-    userop.cc
-    options.cc
-    transform.cc
-    prefersplit.cc
-
-    override.cc
-    inject_sleigh.cc
-    heritage.cc
-    merge.cc
-    dynamic.cc
-
-    flow.cc
-    condexe.cc
-    crc32.cc
-    double.cc
-    subflow.cc
-    printc.cc
-)
+  )
+endif()
