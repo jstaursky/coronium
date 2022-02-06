@@ -72,6 +72,7 @@ add_flex_bison_dependency(slgh-scan slgh-parse)
 add_executable(slgh-compile "")
 
 add_library(coronium "")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
 
 find_library(BFD bfd)
 if(BFD)
