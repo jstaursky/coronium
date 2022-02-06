@@ -113,6 +113,7 @@ protected:
   static OpToken ptr_expr;		///< Pointer adornment for a type declaration
   static OpToken array_expr;		///< Array adornment for a type declaration
   static OpToken enum_cat;		///< The \e concatenation operator for enumerated values
+  static const string typePointerRelToken;	///< The token to print indicating PTRSUB relative to a TypePointerRel
   bool option_NULL;		///< Set to \b true if we should emit NULL keyword
   bool option_inplace_ops;	///< Set to \b true if we should use '+=' '&=' etc.
   bool option_convention;	///< Set to \b true if we should print calling convention
@@ -131,7 +132,7 @@ protected:
   virtual void pushTypeEnd(const Datatype *ct);			///< Push the tail ends of a data-type declaration onto the RPN stack
   void pushBoolConstant(uintb val,const TypeBase *ct,const Varnode *vn,
 			  const PcodeOp *op);
-  void pushCharConstant(uintb val,const TypeChar *ct,const Varnode *vn,
+  void pushCharConstant(uintb val,const Datatype *ct,const Varnode *vn,
 			  const PcodeOp *op);
   void pushEnumConstant(uintb val,const TypeEnum *ct,const Varnode *vn,
 			  const PcodeOp *op);
@@ -146,7 +147,7 @@ protected:
   void emitEnumDefinition(const TypeEnum *ct);		///< Emit the definition of an \e enumeration data-type
   void emitPrototypeOutput(const FuncProto *proto,const Funcdata *fd);	///< Emit the output data-type of a function prototype
   void emitPrototypeInputs(const FuncProto *proto);	///< Emit the input data-types of a function prototype
-  void emitGlobalVarDeclsRecursive(Scope *scope);	///< Emit variable declarations for all global symbols under given scope
+  void emitGlobalVarDeclsRecursive(Scope *symScope);	///< Emit variable declarations for all global symbols under given scope
   void emitLocalVarDecls(const Funcdata *fd);		///< Emit variable declarations for a function
   void emitStatement(const PcodeOp *inst);		///< Emit a statement in the body of a function
   bool emitInplaceOp(const PcodeOp *op);		///< Attempt to emit an expression rooted at an \e in-place operator
@@ -162,6 +163,7 @@ protected:
   void opFunc(const PcodeOp *op);			///< Push a \e functional expression based on the given p-code op to the RPN stack
   void opTypeCast(const PcodeOp *op);			///< Push the given p-code op using type-cast syntax to the RPN stack
   void opHiddenFunc(const PcodeOp *op);			///< Push the given p-code op as a hidden token
+  static void printCharHexEscape(ostream &s,int4 val);	///< Print value as an escaped hex sequence
   bool printCharacterConstant(ostream &s,const Address &addr,Datatype *charType) const;
   int4 getHiddenThisSlot(const PcodeOp *op,FuncProto *fc);	///< Get position of "this" pointer needing to be hidden
   void resetDefaultsPrintC(void);			///< Set default values for options specific to PrintC
@@ -191,10 +193,11 @@ protected:
   virtual void emitExpression(const PcodeOp *op);
   virtual void emitVarDecl(const Symbol *sym);
   virtual void emitVarDeclStatement(const Symbol *sym);
-  virtual bool emitScopeVarDecls(const Scope *scope,int4 cat);
+  virtual bool emitScopeVarDecls(const Scope *symScope,int4 cat);
   virtual void emitFunctionDeclaration(const Funcdata *fd);
   virtual void emitTypeDefinition(const Datatype *ct);
   virtual bool checkPrintNegation(const Varnode *vn);
+  void pushTypePointerRel(const PcodeOp *op);
 public:
   PrintC(Architecture *g,const string &nm="c-language");	///< Constructor
   void setNULLPrinting(bool val) { option_NULL = val; }		///< Toggle the printing of a 'NULL' token
@@ -299,5 +302,29 @@ public:
   virtual void opExtractOp(const PcodeOp *op);
   virtual void opPopcountOp(const PcodeOp *op) { opFunc(op); }
 };
+
+/// \brief Set of print commands for displaying an open brace '{' and setting a new indent level
+///
+/// These are the print commands sent to the emitter prior to printing and \e else block.
+/// The open brace can be canceled if the block decides it wants to use "else if" syntax.
+class PendingBrace : public PendPrint {
+  int4 indentId;		///< Id associated with the new indent level
+public:
+  PendingBrace(void) { indentId = -1; }			///< Constructor
+  int4 getIndentId(void) const { return indentId; }	///< If commands have been issued, returns the new indent level id.
+  virtual void callback(EmitXml *emit);
+};
+
+/// \brief Push a token indicating a PTRSUB (a -> operator) is acting at an offset from the original pointer
+///
+/// When a variable has TypePointerRel as its data-type, PTRSUB acts relative to the \e parent
+/// data-type.  We print a specific token to indicate this relative shift is happening.
+/// \param op is is the PTRSUB op
+inline void PrintC::pushTypePointerRel(const PcodeOp *op)
+
+{
+  pushOp(&function_call,op);
+  pushAtom(Atom(typePointerRelToken,optoken,EmitXml::funcname_color,op));
+}
 
 #endif

@@ -10,7 +10,7 @@
 #define CORONIUM_VERSION                        \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
 
-void collect_files (std::string filetype, std::string dirname, std::vector<std::string>* files)
+void collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files)
 {
     DIR* dir = opendir (dirname.c_str ());
     struct dirent* dp;
@@ -31,7 +31,7 @@ void collect_files (std::string filetype, std::string dirname, std::vector<std::
                 entry.rfind (".sla") == (entry.length () - std::string (".sla").length ()))
             files->push_back (path);
 
-        collect_files (filetype, path, files);
+        collect_file_paths (filetype, path, files);
     }
     closedir (dir);
 }
@@ -40,7 +40,7 @@ std::string find_slafile (std::string fname, std::string dir)
 {
     std::vector<std::string> sla_list;
 
-    collect_files (".sla", dir, &sla_list);
+    collect_file_paths (".sla", dir, &sla_list);
     for (auto& i : sla_list)
         if (i.find (fname) != std::string::npos)
             return std::string (i);
