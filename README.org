@@ -26,31 +26,28 @@ simplify interacting with the ghidra library code.
   sudo ldconfig          # make linker recognize lib on path.
 #+end_src
 
-Coronium will install =slgh-compile= (i.e., the sleigh compiler), =coronium=
-header files and =libcoronium.so=. The cpu specification files (=.sla= files)
-will be installed in =/var/coronium= (default location --can change this during
-install).
+coronium installs: =slgh-compile= (i.e., the sleigh compiler), =coronium= header files,
+=libcoronium.so=, and optionally a build of all the cpu spec files. The cpu specification
+files (=.sla= files) will be installed in =/var/coronium= (default location --can change
+this during install).
 
 However, if you decide to change/move the cpu directory, just be sure to set the
-environment variable =SLA_DIR= to this new location. That way the macro
-=SLA_LOCATION()= will still be able to find cpu definitions. The environment
-variable =SLA_DIR= is given precedence over whatever path was decided during the
-initial install.
+environment variable =SLA_DIR= to this new location. That way coronium will still be able
+to find the sla cpu definitions. The environment variable =SLA_DIR= is given precedence
+over whatever path was decided during the initial install.
 
-*update* .sla files are now searched for recursively inside whatever folder
-SLA_DIR points to (or wherever you specified SLA_LOCATION to point to at compile
-time). That is, the subfolder hierarchy no longer matters as it did in earlier
-versions. You could point SLA_DIR to your top level ghidra folder and
-SLA_LOCATION will be able to search and find the correct .sla file.
+.sla files are searched for recursively inside whatever folder SLA_DIR points to (or
+wherever you specified SLA_LOCATION to point to at compile time). The subfolder hierarchy
+does not matter. You could point SLA_DIR to your top level ghidra folder and coronium will
+search recursively to find the correct .sla file.
 
-After installation compile and run the file =test/example_one/example_one.cpp=
-to make sure everything is working. If you face a problem create an issue. One issue you may face is if you direct =SLA_DIR= to an older
-ghidra installation that uses a different sleigh version. To find out, open one
-of the compiled .sla files inside your ghidra install and note the field
-=<sleigh version= at the top and compare that with an .sla file compiled using
-this project. If there is a mismatch, you will need to recompile the ghidra
-installed .slaspec files using the sleigh compiler but by this project
-=slgh-compile=.
+After installation compile and run the file =test/example_one/example_one.cpp= to make
+sure everything is working. If you face a problem create an issue. One issue you may face
+is if you direct =SLA_DIR= to an older ghidra installation that uses a different sleigh
+version. To find out, open one of the compiled .sla files inside your ghidra install and
+note the field =<sleigh version= at the top and compare that with an .sla file compiled
+using this project. If there is a mismatch, you will need to recompile the ghidra
+installed .slaspec files using the sleigh compiler but by this project =slgh-compile=.
 
 After install you can link to targets with headers such as
 #+begin_src c++

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.13)
 
 set(VERSION_MAJOR 0)            # PROJECT_VERSION_MAJOR
-set(VERSION_MINOR 1)            # PROJECT_VERSION_MINOR
+set(VERSION_MINOR 2)            # PROJECT_VERSION_MINOR
 set(VERSION_PATCH 1)            # PROJECT_VERSION_PATCH
 
 # Define the PROJECT_VERSION_... variables for use here-on.
