@@ -136,6 +136,7 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/context.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/coreaction.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/cover.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/cpool.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/crc32.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/database.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/double.hh
@@ -151,6 +152,7 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/globalcontext.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/heritage.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/inject_sleigh.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/jumptable.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/loadimage.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/memstate.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/merge.hh
@@ -167,6 +169,7 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/prefersplit.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/prettyprint.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/printc.hh
+  ${CMAKE_SOURCE_DIR}/include/coronium/printlanguage.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/rangemap.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/rangeutil.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/ruleaction.hh
@@ -174,7 +177,6 @@ install(
   ${CMAKE_SOURCE_DIR}/include/coronium/sleigh_arch.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/sleighbase.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/sleigh.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/slgh_compile.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghparse.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghpatexpress.hh
   ${CMAKE_SOURCE_DIR}/include/coronium/slghpattern.hh

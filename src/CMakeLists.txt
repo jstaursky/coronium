@@ -27,6 +27,7 @@ target_sources(
 target_sources(
   coronium
   PRIVATE
+  ${CMAKE_BINARY_DIR}/src/pcodeparse.cc # PcodeSnippet
   ${CMAKE_BINARY_DIR}/src/xml.cc
   action.cc
   address.cc
@@ -51,7 +52,10 @@ target_sources(
   float.cc
   flow.cc
   fspec.cc
+  funcdata_block.cc
   funcdata.cc
+  funcdata_op.cc
+  funcdata_varnode.cc
   globalcontext.cc
   heritage.cc
   inject_sleigh.cc
@@ -70,6 +74,7 @@ target_sources(
   prefersplit.cc
   prettyprint.cc
   printc.cc
+  printlanguage.cc
   rangeutil.cc
   ruleaction.cc
   semantics.cc

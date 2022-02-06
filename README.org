@@ -15,16 +15,6 @@ installation of the ghidra c++ source for use as a c++ library. To that end, a
 convenience header =coronium.hpp= is provided which holds helper function(s) to
 simplify interacting with the ghidra library code.
 
-* WARNING!
-After adding in more ghidra src files I discovered that many functions are undefined and
-will require shims before proper linking to targets. Previously the coronium sharedlib
-would still build due to linux's relaxed constraints on runtime symbol handling. However
-after linking the library into the test project I found these undefined symbols will cause
-linking errors for any projects using coronium. The cmake has been updated to prevent this
-in the future, but for the moment the build does not work as I work out a solution. Likely
-will need to just put in shim definitions, and tweak the linking order, so hopefully this
-will not take long.
-
 ** Install
 #+begin_src shell
   mkdir build
