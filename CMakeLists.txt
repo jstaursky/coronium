@@ -7,6 +7,9 @@ set(VERSION_PATCH 1)            # PROJECT_VERSION_PATCH
 # Define the PROJECT_VERSION_... variables for use here-on.
 project(coronium VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} LANGUAGES CXX)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
+
 # Shared library by default. Override with 'cmake -DBUILD_SHARED_LIBS=OFF ..'
 option(BUILD_SHARED_LIBS "Build shared library" ON)
 
@@ -72,7 +75,7 @@ add_flex_bison_dependency(slgh-scan slgh-parse)
 add_executable(slgh-compile "")
 
 add_library(coronium "")
-set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--no-undefined")
+
 
 find_library(BFD bfd)
 if(BFD)
