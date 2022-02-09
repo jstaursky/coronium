@@ -3,3 +3,4 @@ slghparse.cc
 slghscan.cc
 slghparse.tab.hh
 xml.cc
+build
