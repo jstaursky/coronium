@@ -20,7 +20,7 @@ option(BUILD_SHARED_LIBS "Build shared library" ON)
 #    cmake .. -DSLA_LOCATION=<your-directory>
 #
 set(
-  SLA_LOCATION "/var/coronium/"
+  SLA_LOCATION "/var/coronium"
   CACHE STRING "Where to install .sla files."
 )
 

@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include "xml.hh"
 
 #define CORONIUM_VERSION                        \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
@@ -39,7 +40,7 @@
 namespace coronium {
 
     // Internal implementation detail not apart of api. Set by calling cpu_spec().
-    char* __gbl_cpu_dir = nullptr;
+    char* __cpu_dir__ = nullptr;
 
     void collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files)
     {
@@ -94,11 +95,45 @@ namespace coronium {
         // Keep the directory string around.
         size_t delimiter = ret.find_last_of("/\\");
         std::string sla_dir = ret.substr(0, delimiter);
-        __gbl_cpu_dir = new char[sla_dir.length() + 1];
-        memcpy(__gbl_cpu_dir, sla_dir.c_str(), sla_dir.length() + 1);
+        __cpu_dir__ = new char[sla_dir.length() + 1];
+        memcpy(__cpu_dir__, sla_dir.c_str(), sla_dir.length() + 1);
 
         return ret;
     }
+
+    void get_context_vars (Element*& el, std::vector<std::string>* results)
+    {
+        if (!el) {
+            return;
+        }
+        if (el->getName() == "context_set") {
+            for (auto child : el->getChildren()) {
+                if (child->getName() == "set") {
+                    std::string nm = child->getAttributeValue("name");
+                    results->push_back(nm);
+                }
+            }
+        }
+        for (auto e : el->getChildren()) {
+            get_context_vars(e, results);
+        }
+    }
+
+    std::vector<std::string> get_pspec_info ()
+    {
+        std::vector<std::string> results;
+        std::vector<std::string> filelist;
+        collect_file_paths(".pspec", coronium::__cpu_dir__, &filelist);
+
+        DocumentStorage docstorage;
+
+        for (auto i : filelist) {
+            Element *root = docstorage.openDocument(i)->getRoot();
+            get_context_vars(root, &results);
+        }
+        return results;
+    }
+
 
 }
 #endif
