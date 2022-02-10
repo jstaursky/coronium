@@ -28,60 +28,77 @@
 #include <dirent.h>             // DIR
 #include <libgen.h>             // dirname
 #include <stdlib.h>             // getenv
+#include <iostream>
 #include <string>
 #include <vector>
+#include <cstring>
 
 #define CORONIUM_VERSION                        \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
 
 namespace coronium {
 
-void collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files)
-{
-    DIR* dir = opendir (dirname.c_str ());
-    struct dirent* dp;
-    std::string path;
+    // Internal implementation detail not apart of api. Set by calling cpu_spec().
+    char* __gbl_cpu_dir = nullptr;
 
-    if (!dir)
-        return;
+    void collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files)
+    {
+        DIR* dir = opendir (dirname.c_str ());
+        struct dirent* dp;
+        std::string path;
 
-    while (dp = readdir (dir), dp != nullptr) {
-        auto entry = std::string (dp->d_name);
+        if (!dir)
+            return;
 
-        if (entry == "." || entry == "..")
-            continue;
+        while (dp = readdir (dir), dp != nullptr) {
+            auto entry = std::string (dp->d_name);
 
-        path = (dirname + "/" + entry);
+            if (entry == "." || entry == "..")
+                continue;
 
-        if (entry.rfind (".sla") != std::string::npos &&
-                entry.rfind (".sla") == (entry.length () - std::string (".sla").length ()))
-            files->push_back (path);
+            path = (dirname + "/" + entry);
 
-        collect_file_paths (filetype, path, files);
+            if (entry.rfind (filetype) != std::string::npos &&
+                entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
+                files->push_back (path);
+
+            collect_file_paths (filetype, path, files);
+        }
+        closedir (dir);
     }
-    closedir (dir);
-}
 
-std::string find_slafile (std::string fname, std::string dir)
-{
-    std::vector<std::string> sla_list;
+    std::string find_slafile (std::string fname, std::string dir)
+    {
+        std::vector<std::string> sla_list;
 
-    collect_file_paths (".sla", dir, &sla_list);
-    for (auto& i : sla_list)
-        if (i.find (fname) != std::string::npos)
-            return std::string (i);
-    return "";
-}
+        collect_file_paths (".sla", dir, &sla_list);
+        for (auto& i : sla_list)
+            if (i.find (fname) != std::string::npos)
+                return std::string (i);
+        return "";
+    }
 
-std::string cpu_spec (std::string cpu)
-{
-    char const* env = getenv ("SLA_DIR");
-    auto sla_envir = std::string (env ? env : "");
-    auto sla = cpu + std::string (".sla");
-    auto ret = sla_envir.empty () ? find_slafile (sla, "@SLA_LOCATION@")
-               : find_slafile (sla, sla_envir);
-    return ret;
-}
+    std::string cpu_spec (std::string cpu)
+    {
+        char const* env = getenv ("SLA_DIR");
+        auto sla_envir = std::string (env ? env : "");
+        auto sla = cpu + std::string (".sla");
+        auto ret = sla_envir.empty () ? find_slafile (sla, "@SLA_LOCATION@")
+            : find_slafile (sla, sla_envir);
+
+        if (ret.empty()) {
+            std::cout << "unable to find .sla file" << std::endl;
+            exit(EXIT_FAILURE);
+        }
+
+        // Keep the directory string around.
+        size_t delimiter = ret.find_last_of("/\\");
+        std::string sla_dir = ret.substr(0, delimiter);
+        __gbl_cpu_dir = new char[sla_dir.length() + 1];
+        memcpy(__gbl_cpu_dir, sla_dir.c_str(), sla_dir.length() + 1);
+
+        return ret;
+    }
 
 }
 #endif
