@@ -32,6 +32,7 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include "xml.hh"
 
 #define CORONIUM_VERSION                        \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
@@ -99,6 +100,40 @@ namespace coronium {
 
         return ret;
     }
+
+    void get_context_vars (Element*& el, std::vector<std::string>* results)
+    {
+        if (!el) {
+            return;
+        }
+        if (el->getName() == "context_set") {
+            for (auto child : el->getChildren()) {
+                if (child->getName() == "set") {
+                    std::string nm = child->getAttributeValue("name");
+                    results->push_back(nm);
+                }
+            }
+        }
+        for (auto e : el->getChildren()) {
+            get_context_vars(e, results);
+        }
+    }
+
+    std::vector<std::string> get_pspec_info ()
+    {
+        std::vector<std::string> results;
+        std::vector<std::string> filelist;
+        collect_file_paths(".pspec", coronium::__gbl_cpu_dir, &filelist);
+
+        DocumentStorage docstorage;
+
+        for (auto i : filelist) {
+            Element *root = docstorage.openDocument(i)->getRoot();
+            get_context_vars(root, &results);
+        }
+        return results;
+    }
+
 
 }
 #endif
