@@ -1,0 +1,32 @@
+#+begin_quote
+ContextDatabase - The ContextDatabase needs to keep track of any possible context variable
+and its value, over different address ranges. In most cases, you probably don't need to
+override the class yourself, but can use the built-in class, ContextInternal. This
+provides the basic functionality required and will work for different architectures. What
+you may need to do is set values for certain variables, depending on the processor and the
+environment it is running in. For instance, for the x86 platform, you need to set the
+addrsize and opsize bits, to indicate the processor would be running in 32-bit mode. The
+context variables specific to a particular processor are established by the SLEIGH spec.
+So the variables can only be set after the spec has been loaded.
+#+end_quote
+
+#+begin_src c++
+context = new ContextInternal();
+trans = new Sleigh(loader,context);
+DocumentStorage docstorage;
+Element *root = docstorage.openDocument("specfiles/x86.sla")->getRoot();
+docstorage.registerTag(root);
+trans->initialize(docstorage);
+ 
+context->setVariableDefault("addrsize",1);  // Address size is 32-bits
+context->setVariableDefault("opsize",1);    // Operand size is 32-bits
+#+end_src
+
+* NOTES
+Seems like the context variables by processor are found in the =.pspec= files.
+see here https://github.com/NationalSecurityAgency/ghidra/blob/master/Ghidra/Framework/SoftwareModeling/data/languages/processor_spec.rxg
+
+- for =cspec= see here
+  https://github.com/NationalSecurityAgency/ghidra/tree/master/Ghidra/Features/Decompiler/src/main/doc
+  or https://spinsel.dev/assets/2020-06-17-ghidra-brainfuck-processor-1/ghidra_docs/compiler_spec/cspec_pcodeinterp.html#idm41
+  (which is post compiled docs, need to do =xsltproc cspec_html.xsl cspec.xml= otherwise)
