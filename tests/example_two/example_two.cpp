@@ -68,5 +68,10 @@ int main (int argc, char* argv[])
     addr = addr + length;
     length = bin_code.printAssembly (*assememit, addr);
 
+    // for (auto i : coronium::get_pspec_info())
+    //     std::cout << i << std::endl;
+
+    coronium::cpu_contexts();
+
     return 0;
 }
