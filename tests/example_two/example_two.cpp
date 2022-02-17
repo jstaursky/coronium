@@ -13,7 +13,7 @@ class Binary
     Translate* trans;
     DocumentStorage docstorage;
     Element* sleighroot;
-
+    coronium::CPU* cpu;
 public:
     Binary (const std::string& fname, const std::string& target)
     {
@@ -24,8 +24,8 @@ public:
     }
     void initialize (const std::string& arch)
     {
-        auto cpu = coronium::cpu_spec (arch);
-        sleighroot = docstorage.openDocument (cpu)->getRoot();
+        cpu = new coronium::CPU (arch);
+        sleighroot = docstorage.openDocument (*cpu)->getRoot();
         docstorage.registerTag (sleighroot);
         trans->initialize (docstorage); // Initialize the translator
         loader->attachToSpace (trans->getDefaultCodeSpace());
@@ -36,6 +36,7 @@ public:
         return trans->printAssembly (asm_, adr);
     }
 
+    coronium::CPU foo() { return *cpu; }
 };
 
 class AssemblyRaw : public AssemblyEmit
@@ -68,10 +69,14 @@ int main (int argc, char* argv[])
     addr = addr + length;
     length = bin_code.printAssembly (*assememit, addr);
 
-    // for (auto i : coronium::get_pspec_info())
-    //     std::cout << i << std::endl;
+    auto ptr = bin_code.foo();
+    auto p = ptr.cpu_contexts();
+    for (auto itr = p.begin(); itr !=  p.end(); ++itr) {
+        std::cout << itr->first << std::endl;
 
-    coronium::cpu_contexts();
+        for (auto it : itr->second)
+            std::cout << it << std::endl;
+    }
 
     return 0;
 }

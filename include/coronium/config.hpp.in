@@ -39,98 +39,118 @@
 
 namespace coronium {
 
-// Internal implementation detail not apart of api. Set by calling cpu_spec().
-    char* __cpu_dir__ = nullptr;
-
-    void collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files)
+    class CPU
     {
-        DIR* dir = opendir (dirname.c_str ());
-        struct dirent* dp;
-        std::string path;
-
-        if (!dir)
-            return;
-
-        while (dp = readdir (dir), dp != nullptr) {
-            auto entry = std::string (dp->d_name);
-
-            if (entry == "." || entry == "..")
-                continue;
-
-            path = (dirname + "/" + entry);
-
-            if (entry.rfind (filetype) != std::string::npos &&
-                entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
-                files->push_back (path);
-
-            collect_file_paths (filetype, path, files);
-        }
-        closedir (dir);
-    }
-
-    std::string find_slafile (std::string fname, std::string dir)
-    {
-        std::vector<std::string> sla_list;
-
-        collect_file_paths (".sla", dir, &sla_list);
-        for (auto& i : sla_list)
-            if (i.find (fname) != std::string::npos)
-                return std::string (i);
-        return "";
-    }
-
-    std::string cpu_spec (std::string cpu)
-    {
-        char const* env = getenv ("SLA_DIR");
-        auto sla_envir = std::string (env ? env : "");
-        auto sla = cpu + std::string (".sla");
-        auto ret = sla_envir.empty () ? find_slafile (sla, "@SLA_LOCATION@")
-            : find_slafile (sla, sla_envir);
-
-        if (ret.empty()) {
-            std::cout << "unable to find .sla file" << std::endl;
-            exit (EXIT_FAILURE);
+        std::string cpu{""};
+        std::string cpu_dir{""};
+    public:
+        CPU (std::string cpu_) : cpu (cpu_)
+        {
+            auto proc_spec = cpu_spec (cpu);
+            size_t delimiter = proc_spec.find_last_of ("/\\");
+            cpu_dir = proc_spec.substr (0, delimiter);
         }
 
-        // Keep the directory string around.
-        size_t delimiter = ret.find_last_of ("/\\");
-        std::string sla_dir = ret.substr (0, delimiter);
-        __cpu_dir__ = new char[sla_dir.length() + 1];
-        memcpy (__cpu_dir__, sla_dir.c_str(), sla_dir.length() + 1);
+        operator std::string() const { return (cpu_dir + "/" + cpu + ".sla").c_str(); }
 
-        return ret;
-    }
+        // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        auto
+        cpu_spec (std::string cpu) -> std::string
 
-    void get_context_vars (Element*& el, std::vector<std::string>* results)
-    {
-        if (!el) {
-            return;
+        {
+            char const* env = getenv ("SLA_DIR");
+            auto sla_envir = std::string (env ? env : "");
+            auto sla = cpu + std::string (".sla");
+            auto ret = sla_envir.empty () ? find_slafile (sla, "@SLA_LOCATION@")
+                : find_slafile (sla, sla_envir);
+
+            if (ret.empty()) {
+                std::cout << "unable to find .sla file" << std::endl;
+                exit (EXIT_FAILURE);
+            }
+            return ret;
         }
-        for (auto child : el->getChildren()) {
-            if (el->getName() == "context_set") {
-                if (child->getName() == "set") {
-                    std::string nm = child->getAttributeValue ("name");
-                    results->push_back (nm);
-                }
-            } else
-                get_context_vars (child, results);
+
+        // --------------------------------------------------------------------------------
+        auto
+        find_slafile (std::string fname, std::string dir) -> std::string
+
+        {
+            std::vector<std::string> sla_list;
+
+            collect_file_paths (".sla", dir, &sla_list);
+            for (auto& i : sla_list)
+                if (i.find (fname) != std::string::npos)
+                    return std::string (i);
+            return "";
         }
-    }
+        // --------------------------------------------------------------------------------
+        auto
+        cpu_contexts () -> std::map<std::string, std::vector<std::string>>
 
-    std::map<std::string, std::vector<std::string>> cpu_contexts ()
-    {
-        std::map<std::string, std::vector<std::string>> fcontexts;
-        std::vector<std::string> filelist;
-        collect_file_paths (".pspec", coronium::__cpu_dir__, &filelist);
+        {
+            std::map<std::string, std::vector<std::string>> fcontexts;
+            std::vector<std::string> filelist;
+            collect_file_paths (".pspec", cpu_dir, &filelist);
 
-        DocumentStorage docstorage;
+            DocumentStorage docstorage;
 
-        for (auto i : filelist) {
-            Element* root = docstorage.openDocument (i)->getRoot();
-            get_context_vars (root, &fcontexts[i]);
+            for (auto i : filelist) {
+                Element* root = docstorage.openDocument (i)->getRoot();
+                get_context_vars (root, &fcontexts[i]);
+            }
+            return fcontexts;
         }
-        return fcontexts;
-    }
+        // --------------------------------------------------------------------------------
+        auto
+        collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
+
+        {
+            DIR* dir = opendir (dirname.c_str ());
+            struct dirent* dp;
+            std::string path;
+
+            if (!dir)
+                return;
+
+            while (dp = readdir (dir), dp != nullptr) {
+                auto entry = std::string (dp->d_name);
+
+                if (entry == "." || entry == "..")
+                    continue;
+
+                path = (dirname + "/" + entry);
+
+                if (entry.rfind (filetype) != std::string::npos &&
+                    entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
+                    files->push_back (path);
+
+                collect_file_paths (filetype, path, files);
+            }
+            closedir (dir);
+        }
+
+    private:
+
+        auto
+        get_context_vars (Element*& el, std::vector<std::string>* results) -> void
+
+        {
+            if (!el) {
+                return;
+            }
+            for (auto child : el->getChildren()) {
+                if (el->getName() == "context_set") {
+                    if (child->getName() == "set") {
+                        std::string nm = child->getAttributeValue ("name");
+                        results->push_back (nm);
+                    }
+                } else
+                    get_context_vars (child, results);
+            }
+        }
+
+    };
 
 
 }
