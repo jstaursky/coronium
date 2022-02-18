@@ -306,7 +306,7 @@ int main(int argc,char **argv)
   ContextInternal context;
 
   // Set up the assembler/pcode-translator
-  string sleighfilename = coronium::cpu_spec("x86"); // arg is just the basename of the slafile w/no file extension.
+  auto sleighfilename = coronium::CPU("x86"); // arg is just the basename of the slafile w/no file extension.
   Sleigh trans(&loader,&context);
 
   // Read sleigh file into DOM

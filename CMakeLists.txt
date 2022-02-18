@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.13)
 
 set(VERSION_MAJOR 0)            # PROJECT_VERSION_MAJOR
-set(VERSION_MINOR 3)            # PROJECT_VERSION_MINOR
-set(VERSION_PATCH 1)            # PROJECT_VERSION_PATCH
+set(VERSION_MINOR 4)            # PROJECT_VERSION_MINOR
+set(VERSION_PATCH 0)            # PROJECT_VERSION_PATCH
 
 # Define the PROJECT_VERSION_... variables for use here-on.
 project(coronium VERSION ${VERSION_MAJOR}.${VERSION_MINOR}.${VERSION_PATCH} LANGUAGES CXX)

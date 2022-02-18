@@ -31,6 +31,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
 #include <cstring>
 #include "xml.hh"
 
@@ -39,21 +40,42 @@
 
 namespace coronium {
 
+    /*
+     * Processor Contexts
+     */
+    struct CONTEXT_DATA
+    {
+        std::string filename;
+        std::unordered_map<std::string, std::string> ctx;
+        CONTEXT_DATA (std::string fh, std::unordered_map<std::string, std::string> m) : filename (fh), ctx (m) {}
+    };
+
+    /*
+     * Main CPU class for storing processor information.
+     */
     class CPU
     {
-        std::string cpu{""};
-        std::string cpu_dir{""};
+        std::string cpu__{""};
+        std::string cpu_dir__{""};
+
     public:
-        CPU (std::string cpu_) : cpu (cpu_)
+
+        std::vector<CONTEXT_DATA> context_docs;
+
+        // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        CPU (std::string cpu_) : cpu__ (cpu_)
         {
-            auto proc_spec = cpu_spec (cpu);
+            auto proc_spec = cpu_spec (cpu__);
             size_t delimiter = proc_spec.find_last_of ("/\\");
-            cpu_dir = proc_spec.substr (0, delimiter);
+            cpu_dir__ = proc_spec.substr (0, delimiter);
+            context_docs = collect_cpu_context_docs();
         }
 
-        operator std::string() const { return (cpu_dir + "/" + cpu + ".sla").c_str(); }
+        operator std::string() const { return (cpu_dir__ + "/" + cpu__ + ".sla"); }
 
-        // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+        // METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    private:
         auto
         cpu_spec (std::string cpu) -> std::string
 
@@ -84,23 +106,7 @@ namespace coronium {
                     return std::string (i);
             return "";
         }
-        // --------------------------------------------------------------------------------
-        auto
-        cpu_contexts () -> std::map<std::string, std::vector<std::string>>
 
-        {
-            std::map<std::string, std::vector<std::string>> fcontexts;
-            std::vector<std::string> filelist;
-            collect_file_paths (".pspec", cpu_dir, &filelist);
-
-            DocumentStorage docstorage;
-
-            for (auto i : filelist) {
-                Element* root = docstorage.openDocument (i)->getRoot();
-                get_context_vars (root, &fcontexts[i]);
-            }
-            return fcontexts;
-        }
         // --------------------------------------------------------------------------------
         auto
         collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
@@ -130,21 +136,41 @@ namespace coronium {
             closedir (dir);
         }
 
-    private:
-
+        // --------------------------------------------------------------------------------
         auto
-        get_context_vars (Element*& el, std::vector<std::string>* results) -> void
+        collect_cpu_context_docs () -> std::vector<CONTEXT_DATA>
+
+        {
+            std::vector<CONTEXT_DATA> contexts;
+
+            std::vector<std::string> filelist;
+            collect_file_paths (".pspec", cpu_dir__, &filelist);
+
+            DocumentStorage docstorage;
+
+            for (auto i : filelist) {
+                std::unordered_map<std::string, std::string> context_list;
+                Element* root = docstorage.openDocument (i)->getRoot();
+                get_context_vars (root, context_list);
+                contexts.push_back (CONTEXT_DATA (i, context_list));
+            }
+            return contexts;
+        }
+
+        // --------------------------------------------------------------------------------
+        auto
+        get_context_vars (Element*& el, std::unordered_map<std::string, std::string>& results) -> void
 
         {
             if (!el) {
                 return;
             }
-            for (auto child : el->getChildren()) {
-                if (el->getName() == "context_set") {
-                    if (child->getName() == "set") {
-                        std::string nm = child->getAttributeValue ("name");
-                        results->push_back (nm);
-                    }
+            for (auto child : el->getChildren())
+            {
+                if ((el->getName() == "context_set") && (child->getName() == "set")) {
+                    auto attr = child->getAttributeValue("name");
+                    auto val = child->getAttributeValue("val");
+                    results[attr] = val;
                 } else
                     get_context_vars (child, results);
             }

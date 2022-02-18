@@ -69,13 +69,13 @@ int main (int argc, char* argv[])
     addr = addr + length;
     length = bin_code.printAssembly (*assememit, addr);
 
-    auto ptr = bin_code.foo();
-    auto p = ptr.cpu_contexts();
-    for (auto itr = p.begin(); itr !=  p.end(); ++itr) {
-        std::cout << itr->first << std::endl;
+    auto cpu = bin_code.foo();
 
-        for (auto it : itr->second)
-            std::cout << it << std::endl;
+    for (auto i : cpu.context_docs) {
+        std::cout << "file = " << i.filename << std::endl;
+        for (auto itr = i.ctx.begin(); itr != i.ctx.end(); ++itr) {
+            std::cout << "var = " << itr->first << "\nval = " << itr->second << std::endl;
+        }
     }
 
     return 0;
