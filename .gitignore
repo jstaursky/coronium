@@ -4,3 +4,4 @@ slghscan.cc
 slghparse.tab.hh
 xml.cc
 build
+.ccls-cache
