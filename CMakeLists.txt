@@ -59,7 +59,7 @@ add_custom_command(
 # Generate slghparse.cc
 bison_target(
   slgh-parse ${CMAKE_SOURCE_DIR}/parse/slghparse.y ${CMAKE_BINARY_DIR}/src/slghparse.cc
-  DEFINES_FILE ${CMAKE_SOURCE_DIR}/src/slghparse.tab.hh
+  DEFINES_FILE ${CMAKE_BINARY_DIR}/src/slghparse.tab.hh
 )
 # Generate slghscan.cc
 flex_target(
