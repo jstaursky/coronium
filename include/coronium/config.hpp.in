@@ -59,10 +59,8 @@ namespace coronium {
         std::string cpu_dir__{""};
 
     public:
-
         std::vector<CONTEXT_DATA> context_docs;
 
-        // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         CPU (std::string cpu_) : cpu__ (cpu_)
         {
             auto proc_spec = cpu_spec (cpu__);
@@ -74,7 +72,6 @@ namespace coronium {
         operator std::string() const { return (cpu_dir__ + "/" + cpu__ + ".sla"); }
 
         // METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
     private:
         auto
         cpu_spec (std::string cpu) -> std::string
