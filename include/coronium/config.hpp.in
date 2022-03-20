@@ -97,23 +97,24 @@ public:
 private:
 
     /**
-     * Get the .sla (sleigh specification file) filepath.
+     * Get the .ldefs filepath.
      *
      * Filepath is retrieved from default location or from the value of the SLA_DIR
      * environment variable.
      */
     auto
-    cpu_spec (std::string cpu) -> std::string
+    findCpuManifest (std::string cpu) -> std::string
 
     {
         char const* env = getenv ("SLA_DIR");
         auto sla_envir = std::string (env ? env : "");
-        auto sla = cpu + std::string (".sla");
+        auto sla = cpu + std::string (".ldefs");
+
         auto ret = sla_envir.empty () ? find_file (sla, "@SLA_LOCATION@")
             : find_file (sla, sla_envir);
 
         if (ret.empty ()) {
-            std::cout << "unable to find .sla file" << std::endl;
+            std::cout << "unable to find .ldefs file" << std::endl;
             exit (EXIT_FAILURE);
         }
         return ret;

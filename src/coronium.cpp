@@ -55,9 +55,12 @@ CPU::CPU (std::string id)
     _lang_id = id;
     // id's are of the form <cpu>:<endianess>:<size>:<variant>
     _cpu = id.substr(0, id.find(":"));
-    auto proc_spec = cpu_spec (_cpu);
-    size_t delimiter = proc_spec.find_last_of ("/\\");
-    _cpu_dir = proc_spec.substr (0, delimiter);
+    std::transform(_cpu.begin(), _cpu.end(), _cpu.begin(),
+                   [](unsigned char c){ return std::tolower(c); });
+
+    auto cpu_definitions = findCpuManifest (_cpu);
+    size_t delimiter = cpu_definitions.find_last_of ("/\\");
+    _cpu_dir = cpu_definitions.substr (0, delimiter);
 
     setLanguageDefs ();
 }
@@ -137,7 +140,7 @@ CPU::setContexts (ContextDatabase* cdb) -> void
 auto
 CPU::load(const std::string &f) -> void
 {
-    std::string slafilepath = _cpu_dir + "/" + _cpu + ".sla";
+    std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
 
     loader = new DefaultLoadImage(this, f);
     loader->open();
