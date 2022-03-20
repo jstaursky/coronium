@@ -90,7 +90,7 @@ class keepalivecallback : public BreakCallBack {
 public:
   virtual bool addressCallback(const Address &addr);
 };
- 
+
 bool keepalivecallback::addressCallback(const Address &addr)
 {
     // MemoryState *mem = static_cast<EmulateMemory *>(emulate)->getMemoryState();

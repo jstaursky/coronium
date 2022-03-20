@@ -33,148 +33,127 @@
 #include <vector>
 #include <unordered_map>
 #include <cstring>
+#include <functional>
+
+#include "sleigh.hh"
+#include "loadimage.hh"
 #include "xml.hh"
+#include "globalcontext.hh"
+#include "translate.hh"
 
 #define CORONIUM_VERSION                                                \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
 
 namespace coronium {
 
-    /*
-     * Processor Contexts
-     */
-    struct CONTEXT_DATA
-    {
-        std::string filename;
-        std::unordered_map<std::string, std::string> ctx;
-        CONTEXT_DATA (std::string fh, std::unordered_map<std::string, std::string> m) : filename (fh), ctx (m) {}
+std::string find_file (std::string fname, std::string dir);
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class DefaultLoadImage;
+
+
+/**
+ * @class CPU
+ * @brief Primary class for storing + managing processor information.
+ */
+class CPU
+{
+    friend class DefaultLoadImage;
+
+    std::string _lang_id {""};
+    std::string _cpu {""};
+    std::string _cpu_dir {""};
+
+    std::unordered_map<std::string, std::string>
+    ldefs {
+        {"processor", ""},
+        {"endian", ""},
+        {"size", ""},
+        {"variant", ""},
+        {"version", ""},
+        {"slafile", ""},
+        {"processorspec", ""},
+        {"manualindexfile", ""},
+        {"id", ""}
     };
 
-    /*
-     * Main CPU class for storing processor information.
+    ContextDatabase* context = nullptr;
+    DocumentStorage docstorage;
+    Element* sleighroot = nullptr;
+    Translate* trans = nullptr;
+    DefaultLoadImage* loader = nullptr;
+
+public:
+
+    CPU (std::string);
+    virtual ~CPU() {};
+
+    operator std::string () const { return (_cpu_dir + "/" + _cpu + ".sla"); }
+    operator Translate* () const { return trans; }
+
+    auto load(const std::string &f) -> void;
+    auto getArchType() -> std::string { return ldefs["id"]; }
+
+private:
+
+    /**
+     * Get the .sla (sleigh specification file) filepath.
+     *
+     * Filepath is retrieved from default location or from the value of the SLA_DIR
+     * environment variable.
      */
-    class CPU
+    auto
+    cpu_spec (std::string cpu) -> std::string
+
     {
-        std::string cpu__{""};
-        std::string cpu_dir__{""};
+        char const* env = getenv ("SLA_DIR");
+        auto sla_envir = std::string (env ? env : "");
+        auto sla = cpu + std::string (".sla");
+        auto ret = sla_envir.empty () ? find_file (sla, "@SLA_LOCATION@")
+            : find_file (sla, sla_envir);
 
-    public:
-        std::vector<CONTEXT_DATA> context_docs;
-
-        CPU (std::string cpu_) : cpu__ (cpu_)
-        {
-            auto proc_spec = cpu_spec (cpu__);
-            size_t delimiter = proc_spec.find_last_of ("/\\");
-            cpu_dir__ = proc_spec.substr (0, delimiter);
-            context_docs = collect_cpu_context_docs();
+        if (ret.empty ()) {
+            std::cout << "unable to find .sla file" << std::endl;
+            exit (EXIT_FAILURE);
         }
+        return ret;
+    }
 
-        operator std::string() const { return (cpu_dir__ + "/" + cpu__ + ".sla"); }
+    /**
+     * Get the sleigh processor definitions from the .ldefs file.
+     */
+    auto
+    setLanguageDefs () -> void;
 
-        // METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    private:
-        auto
-        cpu_spec (std::string cpu) -> std::string
+    /**
+     * Find and apply the processorspec (.pspec) context definitions.
+     */
+    auto
+    setContexts (ContextDatabase* cdb) -> void;
 
-        {
-            char const* env = getenv ("SLA_DIR");
-            auto sla_envir = std::string (env ? env : "");
-            auto sla = cpu + std::string (".sla");
-            auto ret = sla_envir.empty () ? find_slafile (sla, "@SLA_LOCATION@")
-                : find_slafile (sla, sla_envir);
+};
 
-            if (ret.empty()) {
-                std::cout << "unable to find .sla file" << std::endl;
-                exit (EXIT_FAILURE);
-            }
-            return ret;
-        }
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+class DefaultLoadImage : public RawLoadImage
+{
+    CPU* _cpu = nullptr;
 
-        // --------------------------------------------------------------------------------
-        auto
-        find_slafile (std::string fname, std::string dir) -> std::string
+public:
 
-        {
-            std::vector<std::string> sla_list;
+    DefaultLoadImage(CPU* cpu, const string &f) : RawLoadImage(f) {
+        _cpu = cpu;
+    }
+    virtual ~DefaultLoadImage() {}
 
-            collect_file_paths (".sla", dir, &sla_list);
-            for (auto& i : sla_list)
-                if (i.find (fname) != std::string::npos)
-                    return std::string (i);
-            return "";
-        }
+public:
 
-        // --------------------------------------------------------------------------------
-        auto
-        collect_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
+    virtual std::string getArchType() const override {
+        return _cpu->ldefs["id"];
+    }
 
-        {
-            DIR* dir = opendir (dirname.c_str ());
-            struct dirent* dp;
-            std::string path;
-
-            if (!dir)
-                return;
-
-            while (dp = readdir (dir), dp != nullptr) {
-                auto entry = std::string (dp->d_name);
-
-                if (entry == "." || entry == "..")
-                    continue;
-
-                path = (dirname + "/" + entry);
-
-                if (entry.rfind (filetype) != std::string::npos &&
-                    entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
-                    files->push_back (path);
-
-                collect_file_paths (filetype, path, files);
-            }
-            closedir (dir);
-        }
-
-        // --------------------------------------------------------------------------------
-        auto
-        collect_cpu_context_docs () -> std::vector<CONTEXT_DATA>
-
-        {
-            std::vector<CONTEXT_DATA> contexts;
-
-            std::vector<std::string> filelist;
-            collect_file_paths (".pspec", cpu_dir__, &filelist);
-
-            DocumentStorage docstorage;
-
-            for (auto i : filelist) {
-                std::unordered_map<std::string, std::string> context_list;
-                Element* root = docstorage.openDocument (i)->getRoot();
-                get_context_vars (root, context_list);
-                contexts.push_back (CONTEXT_DATA (i, context_list));
-            }
-            return contexts;
-        }
-
-        // --------------------------------------------------------------------------------
-        auto
-        get_context_vars (Element*& el, std::unordered_map<std::string, std::string>& results) -> void
-
-        {
-            if (!el) {
-                return;
-            }
-            for (auto child : el->getChildren())
-            {
-                if ((el->getName() == "context_set") && (child->getName() == "set")) {
-                    auto attr = child->getAttributeValue("name");
-                    auto val = child->getAttributeValue("val");
-                    results[attr] = val;
-                } else
-                    get_context_vars (child, results);
-            }
-        }
-
-    };
+};
 
 
-}
+
+} // END OF NAMESPACE
 #endif

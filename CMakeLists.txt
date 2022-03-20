@@ -76,7 +76,6 @@ add_executable(slgh-compile "")
 
 add_library(coronium "")
 
-
 find_library(BFD bfd)
 if(BFD)
   message(STATUS "Found libbfd\n")

@@ -110,17 +110,17 @@ public:
   }
 };
 
-static void dumpAssembly(Translate &trans)
+static void dumpAssembly(Translate *trans)
 
 { // Print disassembly of binary code
   AssemblyRaw assememit;	// Set up the disassembly dumper
   int4 length;			// Number of bytes of each machine instruction
 
-  Address addr(trans.getDefaultCodeSpace(),0x80483b4); // First disassembly address
-  Address lastaddr(trans.getDefaultCodeSpace(),0x804846c); // Last disassembly address
+  Address addr(trans->getDefaultCodeSpace(),0x00000000); // First disassembly address
+  Address lastaddr(trans->getDefaultCodeSpace(),0x10); // Last disassembly address
 
   while(addr < lastaddr) {
-    length = trans.printAssembly(assememit,addr);
+    length = trans->printAssembly(assememit,addr);
     addr = addr + length;
   }
 }
@@ -160,20 +160,20 @@ void PcodeRawOut::dump(const Address &addr,OpCode opc,VarnodeData *outvar,Varnod
   cout << endl;
 }
 
-static void dumpPcode(Translate &trans)
+static void dumpPcode(Translate *trans)
 
 { // Dump pcode translation of machine instructions
   PcodeRawOut emit;		// Set up the pcode dumper
   AssemblyRaw assememit;	// Set up the disassembly dumper
   int4 length;			// Number of bytes of each machine instruction
 
-  Address addr(trans.getDefaultCodeSpace(),0x80483b4); // First address to translate
-  Address lastaddr(trans.getDefaultCodeSpace(),0x80483bf); // Last address
+  Address addr(trans->getDefaultCodeSpace(),0x00); // First address to translate
+  Address lastaddr(trans->getDefaultCodeSpace(),0x10); // Last address
 
   while(addr < lastaddr) {
     cout << "--- ";
-    trans.printAssembly(assememit,addr);
-    length = trans.oneInstruction(emit,addr); // Translate instruction
+    trans->printAssembly(assememit,addr);
+    length = trans->oneInstruction(emit,addr); // Translate instruction
     addr = addr + length;		// Advance to next instruction
   }
 }
@@ -297,36 +297,19 @@ int main(int argc,char **argv)
   }
   string action(argv[1]);
 
-  // Set up the loadimage
-  MyLoadImage loader(0x80483b4,myprog,408);
-  //  loader->open();
-  //    loader->adjustVma(adjustvma);
 
-  // Set up the context object
-  ContextInternal context;
-
-  // Set up the assembler/pcode-translator
-  auto sleighfilename = coronium::CPU("x86"); // arg is just the basename of the slafile w/no file extension.
-  Sleigh trans(&loader,&context);
-
-  // Read sleigh file into DOM
-  DocumentStorage docstorage;
-  Element *sleighroot = docstorage.openDocument(sleighfilename)->getRoot();
-  docstorage.registerTag(sleighroot);
-  trans.initialize(docstorage); // Initialize the translator
-
-  // Now that context symbol names are loaded by the translator
-  // we can set the default context
-
-  context.setVariableDefault("addrsize",1); // Address size is 32-bit
-  context.setVariableDefault("opsize",1); // Operand size is 32-bit
+  // For fun try playing other cpu interpretations of bytes. Try:
+  // avr8:LE:16:default
+  // 8085:LE:16:default
+  auto cpu = coronium::CPU("RISCV:LE:64:RV64I");
+  std::cout << cpu.getArchType() << std::endl;
+  cpu.load("/tmp/foo.txt");     // just do something like
+                                // "echo $'\x55\x55\x55\x55\x55' > /tmp/foo.txt"
 
   if (action == "disassemble")
-    dumpAssembly(trans);
+    dumpAssembly(cpu);
   else if (action == "pcode")
-    dumpPcode(trans);
-  else if (action == "emulate")
-    doEmulation(trans,loader);
+    dumpPcode(cpu);
   else
     cerr << "Unknown action: "+action << endl;
 }
