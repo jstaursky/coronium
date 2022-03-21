@@ -39,7 +39,12 @@ find_file (std::string fname, std::string dir) -> std::string
     auto ext = fname.find ("."); // get file extension.
     get_file_paths (fname.substr (ext), dir, &filelist);
     for (auto& i : filelist) {
-        auto f = i.substr(i.find_last_of("/\\") + 1);
+        std::string f = i.substr(i.find_last_of("/\\") + 1);
+        // Need comparison to be case insensitive.
+        for (auto& c : fname)
+            c = std::tolower(c);
+        for (auto& c : f)
+            c = std::tolower(c);
         if (f == fname) {
             return std::string (i);
         }
@@ -55,8 +60,6 @@ CPU::CPU (std::string id)
     _lang_id = id;
     // id's are of the form <cpu>:<endianess>:<size>:<variant>
     _cpu = id.substr(0, id.find(":"));
-    std::transform(_cpu.begin(), _cpu.end(), _cpu.begin(),
-                   [](unsigned char c){ return std::tolower(c); });
 
     auto cpu_definitions = findCpuManifest (_cpu);
     size_t delimiter = cpu_definitions.find_last_of ("/\\");
