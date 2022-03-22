@@ -68,6 +68,20 @@ CPU::CPU (std::string id)
     setLanguageDefs ();
 }
 
+// In some cases the start of an 'id' does not match the CPU folder name.
+CPU::CPU (std::string arch, std::string id)
+{
+    _lang_id = id;
+    _cpu = arch;
+
+    auto cpu_definitions = findCpuManifest (_cpu);
+    size_t delimiter = cpu_definitions.find_last_of ("/\\");
+    _cpu_dir = cpu_definitions.substr (0, delimiter);
+
+    setLanguageDefs ();
+}
+
+
 // PRIVATE METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 auto
 CPU::setLanguageDefs () -> void
