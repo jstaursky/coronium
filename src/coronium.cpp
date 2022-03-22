@@ -134,27 +134,32 @@ CPU::setContexts (ContextDatabase* cdb) -> void
         try {
             context->setVariableDefault(p.first, std::stoi(p.second));
         } catch (LowlevelError& e) {
-            std::cout << "Warning: " << e.explain << std::endl;
+            std::cerr << "Warning: " << e.explain << std::endl;
         }
     }
 }
 
 // PUBLIC METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 auto
-CPU::load(const std::string &f) -> void
+CPU::load(const std::string &f, LoadImage* load) -> void
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
-
-    loader = new DefaultLoadImage(this, f);
-    loader->open();
-    context = new ContextInternal();      // Create a processor context
-    trans = new Sleigh (loader, context); // Instantiate the translator
-
     sleighroot = docstorage.openDocument (slafilepath)->getRoot();
-    docstorage.registerTag (sleighroot);
-    trans->initialize (docstorage);
+    docstorage.registerTag (this->sleighroot);
+    context = new ContextInternal();      // Create a processor context
     setContexts (context);
-    loader->attachToSpace(trans->getDefaultCodeSpace());
+
+    if (!load) {
+        loader = new RawLoadImage(f);
+        dynamic_cast<RawLoadImage*>(loader)->open();
+    }
+
+    trans = new Sleigh (loader, context); // Instantiate the translator
+    trans->initialize (docstorage);
+
+    if (!load) {
+        dynamic_cast<RawLoadImage*>(loader)->attachToSpace(trans->getDefaultCodeSpace());
+    }
 }
 
 
