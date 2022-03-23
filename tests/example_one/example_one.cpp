@@ -301,7 +301,7 @@ int main(int argc,char **argv)
   // For fun try playing other cpu interpretations of bytes. Try:
   // avr8:LE:16:default
   // 8085:LE:16:default
-  auto cpu = coronium::CPU("RISCV:LE:64:RV64I");
+  auto cpu = coronium::CPU("8085:LE:16:default");
   std::cout << cpu.getArchType() << std::endl;
   cpu.load("/tmp/foo.txt");     // just do something like
                                 // "echo $'\x55\x55\x55\x55\x55' > /tmp/foo.txt"

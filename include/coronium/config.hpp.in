@@ -34,6 +34,7 @@
 #include <unordered_map>
 #include <cstring>
 #include <functional>
+#include <memory>
 
 #include "sleigh.hh"
 #include "loadimage.hh"
@@ -46,10 +47,8 @@
 
 namespace coronium {
 
-std::string find_file (std::string fname, std::string dir);
-
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+// NOTE is overwritten if the SLA_DIR environment variable is defined.
+char const* cpus_directory = "@SLA_LOCATION@";
 
 /**
  * @class CPU
@@ -57,79 +56,46 @@ std::string find_file (std::string fname, std::string dir);
  */
 class CPU
 {
-    std::string _lang_id {""};
+    std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
-    std::string _cpu_dir {""};
+    std::string _cpu_dir {""};  // NOTE does not end in '/'
 
-    std::unordered_map<std::string, std::string>
+    mutable std::unordered_map<std::string, std::string>
     ldefs {
         {"processor", ""},
         {"endian", ""},
         {"size", ""},
         {"variant", ""},
         {"version", ""},
-        {"slafile", ""},
-        {"processorspec", ""},
-        {"manualindexfile", ""},
+        {"slafile", ""},         // .sla
+        {"processorspec", ""},   // .pspec
+        {"manualindexfile", ""}, // .idx
         {"id", ""}
     };
 
-    ContextDatabase* context = nullptr;
     DocumentStorage docstorage;
-    Element* sleighroot = nullptr;
-    Translate* trans = nullptr;
+    ContextDatabase* context = nullptr;
     LoadImage* loader = nullptr;
+    Translate* trans = nullptr;
 
 public:
 
     CPU (std::string id);
-    CPU (std::string arch, std::string id);
+    virtual ~CPU();
 
-    virtual ~CPU() {};
-
-    operator std::string () const { return (_cpu_dir + "/" + _cpu + ".sla"); }
+    operator std::string () const { return (_cpu_dir + "/" + ldefs["slafile"]); }
     operator Translate* () const { return trans; }
 
-    auto load(const std::string &f, LoadImage* load = nullptr) -> void;
+    auto load (const std::string& f, LoadImage* load = nullptr) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
 
 private:
 
     /**
-     * Get the .ldefs filepath.
-     *
-     * Filepath is retrieved from default location or from the value of the SLA_DIR
-     * environment variable.
+     * import the processorspec (.pspec) context definitions.
      */
     auto
-    findCpuManifest (std::string cpu) -> std::string
-
-    {
-        char const* env = getenv ("SLA_DIR");
-        auto sla_envir = std::string (env ? env : "");
-        auto sla = cpu + std::string (".ldefs");
-
-        auto ret = sla_envir.empty () ? find_file (sla, "@SLA_LOCATION@")
-            : find_file (sla, sla_envir);
-
-        if (ret.empty ()) {
-            std::cout << "unable to find .ldefs file" << std::endl;
-            exit (EXIT_FAILURE);
-        }
-        return ret;
-    }
-
-    /**
-     * Get the sleigh processor definitions from the .ldefs file.
-     */
-    auto
-    setLanguageDefs () -> void;
-
-    /**
-     * Find and apply the processorspec (.pspec) context definitions.
-     */
-    auto
-    setContexts (ContextDatabase* cdb) -> void;
+    importContexts (ContextDatabase* cdb) -> void;
 
 };
 

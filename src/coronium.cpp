@@ -1,9 +1,10 @@
 #include "coronium.hpp"
+#include <cstring>
 
 namespace coronium {
 
 static auto
-get_file_paths (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
+getFiles (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
 
 {
     DIR* dir = opendir (dirname.c_str ());
@@ -22,29 +23,29 @@ get_file_paths (std::string filetype, std::string dirname, std::vector<std::stri
         path = (dirname + "/" + entry);
 
         if (entry.rfind (filetype) != std::string::npos &&
-                entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
+            entry.rfind (filetype) == (entry.length () - std::string (filetype).length ()))
             files->push_back (path);
 
-        get_file_paths (filetype, path, files);
+        getFiles (filetype, path, files);
     }
     closedir (dir);
 }
 
 // --------------------------------------------------------------------------------
-auto
-find_file (std::string fname, std::string dir) -> std::string
+static auto
+findFile (std::string fname, std::string dir) -> std::string
 
 {
     std::vector<std::string> filelist;
     auto ext = fname.find ("."); // get file extension.
-    get_file_paths (fname.substr (ext), dir, &filelist);
+    getFiles (fname.substr (ext), dir, &filelist);
     for (auto& i : filelist) {
-        std::string f = i.substr(i.find_last_of("/\\") + 1);
+        std::string f = i.substr (i.find_last_of ("/\\") + 1);
         // Need comparison to be case insensitive.
         for (auto& c : fname)
-            c = std::tolower(c);
+            c = std::tolower (c);
         for (auto& c : f)
-            c = std::tolower(c);
+            c = std::tolower (c);
         if (f == fname) {
             return std::string (i);
         }
@@ -52,91 +53,66 @@ find_file (std::string fname, std::string dir) -> std::string
     return "";
 }
 
-
-
 // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CPU::CPU (std::string id)
 {
     _lang_id = id;
+
     // id's are of the form <cpu>:<endianess>:<size>:<variant>
-    _cpu = id.substr(0, id.find(":"));
+    _cpu = id.substr (0, id.find (":"));
 
-    auto cpu_definitions = findCpuManifest (_cpu);
-    size_t delimiter = cpu_definitions.find_last_of ("/\\");
-    _cpu_dir = cpu_definitions.substr (0, delimiter);
+    char const* env = getenv ("SLA_DIR");
+    if (env) {
+        coronium::cpus_directory = new char[strlen (env) + 1];
+        memcpy ((void*)cpus_directory, (void*)env, strlen (env) + 1);
+    }
 
-    setLanguageDefs ();
-}
-
-// In some cases the start of an 'id' does not match the CPU folder name.
-CPU::CPU (std::string arch, std::string id)
-{
-    _lang_id = id;
-    _cpu = arch;
-
-    auto cpu_definitions = findCpuManifest (_cpu);
-    size_t delimiter = cpu_definitions.find_last_of ("/\\");
-    _cpu_dir = cpu_definitions.substr (0, delimiter);
-
-    setLanguageDefs ();
-}
-
-
-// PRIVATE METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-auto
-CPU::setLanguageDefs () -> void
-
-{
-    std::vector<std::unordered_map<std::string, std::string>> results;
-
-    DocumentStorage docs;
-    auto f = find_file (_cpu + ".ldefs", _cpu_dir);
-    Element* root = docs.openDocument (f)->getRoot ();
-
-
-    auto get_langdefs = [&]() -> std::vector<std::unordered_map<std::string, std::string>> {
-        for (auto el : root->getChildren ()) {
-            std::unordered_map<std::string, std::string> ldef;
-            for (auto i = 0; i != el->getNumAttributes (); ++i) {
-                ldef[el->getAttributeName (i)] = el->getAttributeValue (i);
+    std::vector<std::string> filelist;
+    getFiles (".ldefs", cpus_directory, &filelist);
+    for (auto& f : filelist) {
+        DocumentStorage doc;
+        auto root = doc.openDocument (f)->getRoot ();
+        for (auto el : root->getChildren()) {
+            if (_lang_id == el->getAttributeValue ("id")) {
+                _cpu_dir = f.substr (0, f.find_last_of ("/\\"));
+                for (auto i = 0; i != el->getNumAttributes (); ++i) {
+                    ldefs[el->getAttributeName (i)] = el->getAttributeValue (i);
+                }
             }
-            results.push_back (ldef);
-        }
-        return results;
-    };
-
-    // configure processor language definitions.
-    for (auto defs : get_langdefs ())
-    {
-        if (defs["id"] == _lang_id) {
-            for (auto s : defs)
-                ldefs[s.first] = s.second;
-            break;
         }
     }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+CPU::~CPU()
+{
+    if (context)
+        delete context;
+    if (trans)
+        delete trans;
+    if (loader)
+        delete loader;
+}
+
+// PRIVATE METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 auto
-CPU::setContexts (ContextDatabase* cdb) -> void
+CPU::importContexts (ContextDatabase* cdb) -> void
 {
     DocumentStorage docs;
-    auto pspec = find_file(ldefs["processorspec"], _cpu_dir);
-    std::cout << "found " << pspec << std::endl;
+    auto pspec = findFile (ldefs["processorspec"], _cpu_dir);
     auto e = docs.openDocument (pspec)->getRoot();
 
     std::unordered_map<std::string, std::string> ctx;
-    std::function<void(Element*&, std::unordered_map<std::string, std::string>&)> conf_ctx;
-    conf_ctx = [&conf_ctx](Element*& el, std::unordered_map<std::string, std::string>& results) -> void
-    {
-        if (!el) {
+    std::function<void (Element*&, std::unordered_map<std::string, std::string>&)> conf_ctx;
+    conf_ctx = [&conf_ctx] (Element*& el, std::unordered_map<std::string, std::string>& results) -> void {
+        if (!el)
+        {
             return;
         }
         for (auto child : el->getChildren())
         {
             if ((el->getName() == "context_set") && (child->getName() == "set")) {
-                auto attr = child->getAttributeValue("name");
-                auto val = child->getAttributeValue("val");
+                auto attr = child->getAttributeValue ("name");
+                auto val = child->getAttributeValue ("val");
                 results[attr] = val;
             } else
                 conf_ctx (child, results);
@@ -146,33 +122,33 @@ CPU::setContexts (ContextDatabase* cdb) -> void
     conf_ctx (e, ctx);
     for (auto p : ctx) {
         try {
-            context->setVariableDefault(p.first, std::stoi(p.second));
+            context->setVariableDefault (p.first, std::stoi (p.second));
         } catch (LowlevelError& e) {
             std::cerr << "Warning: " << e.explain << std::endl;
         }
     }
 }
 
-// PUBLIC METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+// PUBLIC METHODS -----------------------------------------------------------------
 auto
-CPU::load(const std::string &f, LoadImage* load) -> void
+CPU::load (const std::string& f, LoadImage* load) -> void
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
-    sleighroot = docstorage.openDocument (slafilepath)->getRoot();
-    docstorage.registerTag (this->sleighroot);
+    Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
+    docstorage.registerTag (sleighroot);
     context = new ContextInternal();      // Create a processor context
-    setContexts (context);
+    importContexts (context);
 
     if (!load) {
-        loader = new RawLoadImage(f);
-        dynamic_cast<RawLoadImage*>(loader)->open();
+        loader = new RawLoadImage (f);
+        dynamic_cast<RawLoadImage*> (loader)->open();
     }
 
     trans = new Sleigh (loader, context); // Instantiate the translator
     trans->initialize (docstorage);
 
     if (!load) {
-        dynamic_cast<RawLoadImage*>(loader)->attachToSpace(trans->getDefaultCodeSpace());
+        dynamic_cast<RawLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
     }
 }
 
