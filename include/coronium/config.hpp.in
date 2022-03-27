@@ -114,6 +114,7 @@ public:
     operator Translate* () const { return trans; }
 
     auto load (const std::string& f, LoadImage* load = nullptr) -> void;
+    auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load = nullptr) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
 
 private:

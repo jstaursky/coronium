@@ -129,6 +129,7 @@ CPU::~CPU()
 // PRIVATE METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 auto
 CPU::importContexts (ContextDatabase* cdb) -> void
+
 {
     DocumentStorage docs;
     auto pspec = findFile (ldefs["processorspec"], _cpu_dir);
@@ -165,6 +166,7 @@ CPU::importContexts (ContextDatabase* cdb) -> void
 // PUBLIC METHODS -----------------------------------------------------------------
 auto
 CPU::load (const std::string& f, LoadImage* load) -> void
+
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
@@ -184,6 +186,30 @@ CPU::load (const std::string& f, LoadImage* load) -> void
 
     importContexts (context);
 }
+
+// --------------------------------------------------------------------------------
+auto
+CPU::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load) -> void
+{
+    std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
+    Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
+    docstorage.registerTag (sleighroot);
+    context = new ContextInternal();      // Create a processor context
+
+    if (!load) {
+        loader = new DefaultLoadImage (baseaddr, imgbuffer, imgsize);
+    }
+
+    trans = new Sleigh (loader, context); // Instantiate the translator
+    trans->initialize (docstorage);
+
+    if (!load) {
+        dynamic_cast<DefaultLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
+    }
+
+    importContexts (context);
+}
+
 
 /*
  *

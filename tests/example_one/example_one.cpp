@@ -297,14 +297,16 @@ int main(int argc,char **argv)
   }
   string action(argv[1]);
 
-
   // For fun try playing other cpu interpretations of bytes. Try:
-  // avr8:LE:16:default
   // 8085:LE:16:default
-  auto cpu = coronium::CPU("8085:LE:16:default");
-  std::cout << cpu.getArchType() << std::endl;
-  cpu.load("/tmp/foo.txt");     // just do something like
-                                // "echo $'\x55\x55\x55\x55\x55' > /tmp/foo.txt"
+  uint1 payload[] = {
+      0x66, 0x68, 0xeb, 0x05, 0x31, 0xc0,
+      0x74, 0xfa, 0xe8, 0xff, 0xc0, 0x67, 0x48
+  };
+
+  auto cpu = coronium::CPU ("x86:LE:32:default");
+  std::cout << cpu.getArchType () << std::endl;
+  cpu.load (0x00000000, payload, sizeof (payload));
 
   if (action == "disassemble")
     dumpAssembly(cpu);
