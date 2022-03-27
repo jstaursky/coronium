@@ -82,12 +82,12 @@ findFile (std::string fname, std::string dir) -> std::string
 
 /*
  *
- * CPU
+ * Coronium
  *
  */
 
 // CONSTRUCTORS/DESTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-CPU::CPU (std::string id)
+Coronium::Coronium (std::string id)
 {
     _lang_id = id;
 
@@ -116,7 +116,7 @@ CPU::CPU (std::string id)
     }
 }
 
-CPU::~CPU()
+Coronium::~Coronium()
 {
     if (context)
         delete context;
@@ -128,7 +128,7 @@ CPU::~CPU()
 
 // PRIVATE METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 auto
-CPU::importContexts (ContextDatabase* cdb) -> void
+Coronium::importContexts (ContextDatabase* cdb) -> void
 
 {
     DocumentStorage docs;
@@ -165,7 +165,7 @@ CPU::importContexts (ContextDatabase* cdb) -> void
 
 // PUBLIC METHODS -----------------------------------------------------------------
 auto
-CPU::load (const std::string& f, LoadImage* load) -> void
+Coronium::load (const std::string& f, LoadImage* load) -> void
 
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
@@ -189,7 +189,8 @@ CPU::load (const std::string& f, LoadImage* load) -> void
 
 // --------------------------------------------------------------------------------
 auto
-CPU::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load) -> void
+Coronium::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load) -> void
+
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
@@ -210,6 +211,67 @@ CPU::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load) -> v
     importContexts (context);
 }
 
+// --------------------------------------------------------------------------------
+auto
+Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
+
+{
+    std::vector<Instruction> result;
+
+    AssemblyRaw asm_emit;
+    PcodeRaw pcode_emit;
+
+    Address pos (trans->getDefaultCodeSpace(), addr);
+    Address finish (trans->getDefaultCodeSpace(), addr + len);
+
+    int4 length;
+
+    while (pos < finish) {
+        trans->printAssembly (asm_emit, pos);
+        length = trans->oneInstruction (pcode_emit, pos);
+        auto insn = Instruction (asm_emit, pcode_emit);
+        insn.size = length;
+        result.push_back (insn);
+        pos = pos + length;
+    }
+    return result;
+}
+
+/*
+ *
+ * AssemblyRaw
+ *
+ */
+
+auto
+AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-> void
+
+{
+    this->address = addr;
+    this->mnemonic = mnem;
+    this->body = body;
+}
+
+/*
+ *
+ * PcodeRaw
+ *
+ */
+
+auto
+PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
+
+{
+    this->addr = addr;
+    this->opc = opc;
+    if (outvar != (VarnodeData*)0) {
+        this->hasOutvar = true;
+        this->outvar = *outvar;
+    }
+    for (auto i = 0; i != isize; ++i) {
+        this->vars.push_back (vars[i]);
+    }
+}
 
 /*
  *
@@ -301,7 +363,6 @@ ERROR:
         exit (EXIT_FAILURE);
     }
 }
-
 
 // |EOF|--------------------------------------------------------------------------|
 }

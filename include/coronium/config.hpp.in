@@ -52,6 +52,38 @@ char const* cpus_directory = "@SLA_LOCATION@";
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /**
+ * @class PcodeRaw
+ * @brief Used to get raw pcode.
+ */
+
+class PcodeRaw : public PcodeEmit
+{
+public:
+    Address addr;
+    OpCode opc;
+    bool hasOutvar = false;
+    VarnodeData outvar;
+    std::vector<VarnodeData> vars;
+
+    virtual void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize);
+};
+
+/**
+ * @class AssemblyRaw
+ * @brief Used to get assembly.
+ */
+
+class AssemblyRaw : public AssemblyEmit
+{
+public:
+    Address address;
+    std::string mnemonic;
+    std::string body;
+
+    virtual void dump (const Address& addr, const string& mnem, const string& body);
+};
+
+/**
  * @class DefaultLoadImage
  * @brief the LoadImage class used when none is provided.
  */
@@ -76,12 +108,25 @@ public:
     virtual void loadFill (uint1* ptr, int4 size, const Address& addr);
 };
 
+/**
+ * @class Instruction
+ * @brief All content relating to a single instruction.
+ */
+struct Instruction
+{
+    AssemblyRaw assembly;
+    PcodeRaw pcode;
+    int4 size;                  // length of the instruction.
+
+    Instruction (AssemblyRaw _asm, PcodeRaw _pcode) : assembly (_asm), pcode (_pcode)
+    {};
+};
 
 /**
- * @class CPU
+ * @class Coronium
  * @brief Primary class for storing + managing processor information.
  */
-class CPU
+class Coronium
 {
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
@@ -106,9 +151,8 @@ class CPU
     Translate* trans = nullptr;
 
 public:
-
-    CPU (std::string id);
-    virtual ~CPU();
+    Coronium (std::string id);
+    virtual ~Coronium();
 
     operator std::string () const { return (_cpu_dir + "/" + ldefs["slafile"]); }
     operator Translate* () const { return trans; }
@@ -116,9 +160,9 @@ public:
     auto load (const std::string& f, LoadImage* load = nullptr) -> void;
     auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load = nullptr) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
+    auto dump (uintb addr, int4 len = 1) -> std::vector<Instruction>;
 
 private:
-
     /**
      * import the processorspec (.pspec) context definitions.
      */
