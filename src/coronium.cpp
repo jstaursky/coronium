@@ -1,7 +1,34 @@
+/* ###
+ * @file coronium.cpp
+ * @author Joe Staursky
+ *
+ * @section LICENSE
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "coronium.hpp"
 #include <cstring>
+#include <cstdio>  // perror(), fopen(), fputs() and fclose()
+#include <cstdlib> // EXIT_* macros */
 
 namespace coronium {
+
+/*
+ *
+ * static functions
+ *
+ */
 
 static auto
 getFiles (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
@@ -53,7 +80,13 @@ findFile (std::string fname, std::string dir) -> std::string
     return "";
 }
 
-// CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
+ *
+ * CPU
+ *
+ */
+
+// CONSTRUCTORS/DESTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 CPU::CPU (std::string id)
 {
     _lang_id = id;
@@ -137,20 +170,112 @@ CPU::load (const std::string& f, LoadImage* load) -> void
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
     context = new ContextInternal();      // Create a processor context
-    importContexts (context);
 
     if (!load) {
-        loader = new RawLoadImage (f);
-        dynamic_cast<RawLoadImage*> (loader)->open();
+        loader = new DefaultLoadImage (f);
     }
 
     trans = new Sleigh (loader, context); // Instantiate the translator
     trans->initialize (docstorage);
 
     if (!load) {
-        dynamic_cast<RawLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
+        dynamic_cast<DefaultLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
+    }
+
+    importContexts (context);
+}
+
+/*
+ *
+ * DefaultLoadImage
+ *
+ */
+
+// CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+DefaultLoadImage::DefaultLoadImage (const string& filename) : LoadImage (filename)
+{
+    type = BINARY_FILE;
+    vma = 0;
+    spaceid = (AddrSpace*)0;
+    binaryFile = fopen (filename.c_str(), "r+b");
+    if (!binaryFile) {
+        std::string err = "unable to open file" + filename;
+        perror (err.c_str());
+        exit (EXIT_FAILURE);
+    }
+    fseek (binaryFile, 0L, SEEK_END);
+    bsize = ftell (binaryFile);
+    fseek (binaryFile, 0L, SEEK_SET);
+}
+
+DefaultLoadImage::DefaultLoadImage (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
+{
+    type = BINARY_BUFFER;
+    vma = addr;
+    binaryBuffer = buffer;
+    bsize = sz;
+}
+
+DefaultLoadImage::~DefaultLoadImage ()
+{
+    if (type == BINARY_FILE) {
+        fclose (binaryFile);
+    }
+}
+
+// PUBLIC METHODS -----------------------------------------------------------------
+auto
+DefaultLoadImage::adjustVma (long adjust) -> void
+
+{
+    adjust = AddrSpace::addressToByte (adjust, spaceid->getWordSize());
+    vma += adjust;
+}
+
+// --------------------------------------------------------------------------------
+auto
+DefaultLoadImage::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
+
+{
+    // Get the offset relative to the base address.
+    uintb curaddr = addr.getOffset() - vma;
+    uintb readlen;
+    int4 rest = len;
+
+    if (curaddr >= bsize) {
+        // initial address not within binary.
+        goto ERROR;
+    }
+    // ensure that the amount read is within the addr space bounds of the binary.
+    readlen = (curaddr + len > bsize) ? bsize - curaddr : len;
+
+    if (this->type == BINARY_FILE) {
+        fseek (binaryFile, curaddr, SEEK_SET);
+        curaddr += fread (ptr, sizeof (uint1), readlen, binaryFile);
+        rest -= readlen;
+    }
+
+    if (this->type == BINARY_BUFFER) {
+        memcpy (ptr, &binaryBuffer[curaddr], readlen);
+        curaddr += readlen;
+        rest -= readlen;
+    }
+
+    if (curaddr >= bsize) {
+        memset (ptr + len - rest, 0, rest);
+    }
+
+ERROR:
+    // wait to error out until we are unable to read any bytes.
+    if (len == rest) {
+        ostringstream errmsg;
+        errmsg << "Unable to load " << dec << len << " bytes at " << addr.getShortcut();
+        addr.printRaw (errmsg);
+        std::cout << errmsg.str() << std::endl;
+        exit (EXIT_FAILURE);
     }
 }
 
 
-} // END OF NAMESPACE
+// |EOF|--------------------------------------------------------------------------|
+}

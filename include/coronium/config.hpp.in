@@ -21,7 +21,6 @@
  * Convenience functions for interacting with the ghidra library.
  */
 
-
 #ifndef _CORONIUM_HPP_
 #define _CORONIUM_HPP_
 
@@ -47,8 +46,36 @@
 
 namespace coronium {
 
-// NOTE is overwritten if the SLA_DIR environment variable is defined.
+// NOTE overwritten if the SLA_DIR environment variable is defined.
 char const* cpus_directory = "@SLA_LOCATION@";
+
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/**
+ * @class DefaultLoadImage
+ * @brief the LoadImage class used when none is provided.
+ */
+class DefaultLoadImage : public LoadImage
+{
+    enum
+    { BINARY_FILE, BINARY_BUFFER, NO_INIT } type = NO_INIT;
+    union {
+        uint1* binaryBuffer = nullptr;
+        FILE*  binaryFile;
+    };
+    int4 bsize;                 // size of binary
+    AddrSpace* spaceid;
+    uintb vma;                  // virtual memory base address.
+public:
+    DefaultLoadImage (const string& filename);             // For opening files
+    DefaultLoadImage (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
+    auto attachToSpace (AddrSpace* id) -> void { spaceid = id; }
+    virtual ~DefaultLoadImage ();
+    virtual void adjustVma (long adjust);
+    virtual string getArchType (void) const { return "unknown"; };
+    virtual void loadFill (uint1* ptr, int4 size, const Address& addr);
+};
+
 
 /**
  * @class CPU
