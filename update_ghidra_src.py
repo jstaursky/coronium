@@ -11,9 +11,9 @@ parser.add_argument("--token", help='authorization token (to increase github req
 
 args = parser.parse_args()
 
-src_names = os.listdir(os.path.join(os.getcwd(), "src"))
-hdr_names = os.listdir(os.path.join(os.getcwd(), "include/coronium"))
-parse_names = os.listdir(os.path.join(os.getcwd(), "parse"))
+src_names = os.listdir(os.path.join(os.getcwd(), "dependencies/ghidra/src"))
+hdr_names = os.listdir(os.path.join(os.getcwd(), "dependencies/ghidra/include"))
+parse_names = os.listdir(os.path.join(os.getcwd(), "dependencies/ghidra/parse"))
 
 if args.token:
     request = lambda x: requests.get(x, headers={"Authorization": "token " + args.token})
@@ -33,21 +33,21 @@ if not args.cpus:
         if el["name"] in src_names:
             print("updating file " + el["name"])
             fcontent = request(el["download_url"])
-            fpath = os.path.join(os.getcwd(), "src", el["name"])
+            fpath = os.path.join(os.getcwd(), "dependencies/ghidra/src", el["name"])
             file = open(fpath, 'w')
             file.write(fcontent.text)
 
         if el["name"] in hdr_names:
             print("updating file " + el["name"])
             fcontent = request(el["download_url"])
-            fpath = os.path.join(os.getcwd(), "include/coronium", el["name"])
+            fpath = os.path.join(os.getcwd(), "dependencies/ghidra/include", el["name"])
             file = open(fpath, 'w')
             file.write(fcontent.text)
 
         if el["name"] in parse_names:
             print("updating file " + el["name"])
             fcontent = request(el["download_url"])
-            fpath = os.path.join(os.getcwd(), "parse", el["name"])
+            fpath = os.path.join(os.getcwd(), "dependencies/ghidra/parse", el["name"])
             file = open(fpath, 'w')
             file.write(fcontent.text)
 

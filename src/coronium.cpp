@@ -1,35 +1,37 @@
-/* ###
+/**
  * @file coronium.cpp
- * @author Joe Staursky
+ * Copyright (C) 2022 Joe Staursky
  *
  * @section LICENSE
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * This file is part of coronium.
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * coronium is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * coronium is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * coronium. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#include "coronium.hpp"
 #include <cstring>
 #include <cstdio>  // perror(), fopen(), fputs() and fclose()
-#include <cstdlib> // EXIT_* macros */
+#include <cstdlib> // EXIT_* macros
 
-namespace coronium {
+#include "coronium.hpp"
+
+using namespace coronium;
 
 /*
  *
  * static functions
  *
  */
-
 static auto
 getFiles (std::string filetype, std::string dirname, std::vector<std::string>* files) -> void
 
@@ -242,7 +244,6 @@ Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
  * AssemblyRaw
  *
  */
-
 auto
 AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-> void
 
@@ -257,7 +258,6 @@ AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-
  * PcodeRaw
  *
  */
-
 auto
 PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
 
@@ -365,4 +365,3 @@ ERROR:
 }
 
 // |EOF|--------------------------------------------------------------------------|
-}

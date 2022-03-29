@@ -40,7 +40,7 @@ int main(int argc, char **argv)
   std::cout << coro.getArchType () << std::endl;
   coro.load (0x00000000, payload, sizeof (payload));
 
-  std::vector<coronium::Instruction> insn = coro.dump(0x00000000);
+  std::vector<coronium::Instruction> insn = coro.dump(0x00000000, sizeof(payload));
 
   for (auto i : insn) {
       std::cout << i.assembly.mnemonic << " "

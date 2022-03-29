@@ -26,13 +26,16 @@ set(
 
 # Create the convenience header "coronium.hpp" which defines the macro SLA_LOCATION(cpu)
 configure_file(
-  ${CMAKE_SOURCE_DIR}/include/coronium/config.hpp.in
+  ${CMAKE_SOURCE_DIR}/include/coronium/coronium.hpp.in
   ${CMAKE_BINARY_DIR}/coronium.hpp
 )
 install(FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)
+
+# Ghidra code handling
+set(DEPS_GHIDRA "${CMAKE_SOURCE_DIR}/dependencies/ghidra")
 
 # Generate pcodeparse.cc
 add_custom_target(
@@ -43,7 +46,7 @@ add_custom_target(
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
   COMMAND ${BISON_EXECUTABLE}
-  ARGS -y ${CMAKE_SOURCE_DIR}/parse/pcodeparse.y -p pcode -o ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
+  ARGS -y ${DEPS_GHIDRA}/parse/pcodeparse.y -p pcode -o ${CMAKE_BINARY_DIR}/src/pcodeparse.cc
 )
 # Generate xml.cc
 add_custom_target(
@@ -54,16 +57,16 @@ add_custom_target(
 add_custom_command(
   OUTPUT ${CMAKE_BINARY_DIR}/src/xml.cc
   COMMAND ${BISON_EXECUTABLE}
-  ARGS -y ${CMAKE_SOURCE_DIR}/parse/xml.y -p xml -o ${CMAKE_BINARY_DIR}/src/xml.cc
+  ARGS -y ${DEPS_GHIDRA}/parse/xml.y -p xml -o ${CMAKE_BINARY_DIR}/src/xml.cc
 )
 # Generate slghparse.cc
 bison_target(
-  slgh-parse ${CMAKE_SOURCE_DIR}/parse/slghparse.y ${CMAKE_BINARY_DIR}/src/slghparse.cc
+  slgh-parse ${DEPS_GHIDRA}/parse/slghparse.y ${CMAKE_BINARY_DIR}/src/slghparse.cc
   DEFINES_FILE ${CMAKE_BINARY_DIR}/src/slghparse.tab.hh
 )
 # Generate slghscan.cc
 flex_target(
-  slgh-scan ${CMAKE_SOURCE_DIR}/parse/slghscan.l
+  slgh-scan ${DEPS_GHIDRA}/parse/slghscan.l
   ${CMAKE_BINARY_DIR}/src/slghscan.cc
 )
 add_flex_bison_dependency(slgh-scan slgh-parse)
@@ -82,8 +85,8 @@ if(BFD)
   target_link_libraries(coronium ${BFD})
   install(
     FILES
-    ${CMAKE_SOURCE_DIR}/include/coronium/bfd_arch.hh
-    ${CMAKE_SOURCE_DIR}/include/coronium/loadimage_bfd.hh
+    ${DEPS_GHIDRA}/include/bfd_arch.hh
+    ${DEPS_GHIDRA}/include/loadimage_bfd.hh
     DESTINATION
     include/coronium
   )
@@ -103,9 +106,10 @@ set_target_properties(
   SOVERSION ${PROJECT_VERSION_MAJOR}
 )
 
+add_subdirectory(${DEPS_GHIDRA}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
-include_directories(${CMAKE_SOURCE_DIR}/include/coronium)
+#include_directories(${CMAKE_SOURCE_DIR}/include/coronium)
 
 # SLEIGH COMPILER
 install(
@@ -126,82 +130,82 @@ install(
 # CORONIUM HEADER FILES
 install(
   FILES
-  ${CMAKE_SOURCE_DIR}/include/coronium/action.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/address.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/architecture.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/blockaction.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/block.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/capability.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/cast.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/comment.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/condexe.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/context.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/coreaction.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/cover.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/cpool.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/crc32.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/database.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/double.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/dynamic.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/emulate.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/emulateutil.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/error.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/filemanage.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/float.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/flow.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/fspec.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/funcdata.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/globalcontext.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/heritage.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/inject_sleigh.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/jumptable.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/loadimage.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/memstate.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/merge.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/opbehavior.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/opcodes.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/op.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/options.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/override.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/partmap.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/pcodecompile.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/pcodeinject.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/pcodeparse.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/pcoderaw.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/prefersplit.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/prettyprint.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/printc.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/printlanguage.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/rangemap.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/rangeutil.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/ruleaction.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/semantics.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/sleigh_arch.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/sleighbase.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/sleigh.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/slghparse.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/slghpatexpress.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/slghpattern.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/slghsymbol.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/space.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/stringmanage.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/subflow.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/transform.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/translate.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/type.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/typeop.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/types.h
-  ${CMAKE_SOURCE_DIR}/include/coronium/userop.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/variable.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/varmap.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/varnode.hh
-  ${CMAKE_SOURCE_DIR}/include/coronium/xml.hh
+  ${DEPS_GHIDRA}/include/action.hh
+  ${DEPS_GHIDRA}/include/address.hh
+  ${DEPS_GHIDRA}/include/architecture.hh
+  ${DEPS_GHIDRA}/include/blockaction.hh
+  ${DEPS_GHIDRA}/include/block.hh
+  ${DEPS_GHIDRA}/include/capability.hh
+  ${DEPS_GHIDRA}/include/cast.hh
+  ${DEPS_GHIDRA}/include/comment.hh
+  ${DEPS_GHIDRA}/include/condexe.hh
+  ${DEPS_GHIDRA}/include/context.hh
+  ${DEPS_GHIDRA}/include/coreaction.hh
+  ${DEPS_GHIDRA}/include/cover.hh
+  ${DEPS_GHIDRA}/include/cpool.hh
+  ${DEPS_GHIDRA}/include/crc32.hh
+  ${DEPS_GHIDRA}/include/database.hh
+  ${DEPS_GHIDRA}/include/double.hh
+  ${DEPS_GHIDRA}/include/dynamic.hh
+  ${DEPS_GHIDRA}/include/emulate.hh
+  ${DEPS_GHIDRA}/include/emulateutil.hh
+  ${DEPS_GHIDRA}/include/error.hh
+  ${DEPS_GHIDRA}/include/filemanage.hh
+  ${DEPS_GHIDRA}/include/float.hh
+  ${DEPS_GHIDRA}/include/flow.hh
+  ${DEPS_GHIDRA}/include/fspec.hh
+  ${DEPS_GHIDRA}/include/funcdata.hh
+  ${DEPS_GHIDRA}/include/globalcontext.hh
+  ${DEPS_GHIDRA}/include/heritage.hh
+  ${DEPS_GHIDRA}/include/inject_sleigh.hh
+  ${DEPS_GHIDRA}/include/jumptable.hh
+  ${DEPS_GHIDRA}/include/loadimage.hh
+  ${DEPS_GHIDRA}/include/memstate.hh
+  ${DEPS_GHIDRA}/include/merge.hh
+  ${DEPS_GHIDRA}/include/opbehavior.hh
+  ${DEPS_GHIDRA}/include/opcodes.hh
+  ${DEPS_GHIDRA}/include/op.hh
+  ${DEPS_GHIDRA}/include/options.hh
+  ${DEPS_GHIDRA}/include/override.hh
+  ${DEPS_GHIDRA}/include/partmap.hh
+  ${DEPS_GHIDRA}/include/pcodecompile.hh
+  ${DEPS_GHIDRA}/include/pcodeinject.hh
+  ${DEPS_GHIDRA}/include/pcodeparse.hh
+  ${DEPS_GHIDRA}/include/pcoderaw.hh
+  ${DEPS_GHIDRA}/include/prefersplit.hh
+  ${DEPS_GHIDRA}/include/prettyprint.hh
+  ${DEPS_GHIDRA}/include/printc.hh
+  ${DEPS_GHIDRA}/include/printlanguage.hh
+  ${DEPS_GHIDRA}/include/rangemap.hh
+  ${DEPS_GHIDRA}/include/rangeutil.hh
+  ${DEPS_GHIDRA}/include/ruleaction.hh
+  ${DEPS_GHIDRA}/include/semantics.hh
+  ${DEPS_GHIDRA}/include/sleigh_arch.hh
+  ${DEPS_GHIDRA}/include/sleighbase.hh
+  ${DEPS_GHIDRA}/include/sleigh.hh
+  ${DEPS_GHIDRA}/include/slghparse.hh
+  ${DEPS_GHIDRA}/include/slghpatexpress.hh
+  ${DEPS_GHIDRA}/include/slghpattern.hh
+  ${DEPS_GHIDRA}/include/slghsymbol.hh
+  ${DEPS_GHIDRA}/include/space.hh
+  ${DEPS_GHIDRA}/include/stringmanage.hh
+  ${DEPS_GHIDRA}/include/subflow.hh
+  ${DEPS_GHIDRA}/include/transform.hh
+  ${DEPS_GHIDRA}/include/translate.hh
+  ${DEPS_GHIDRA}/include/type.hh
+  ${DEPS_GHIDRA}/include/typeop.hh
+  ${DEPS_GHIDRA}/include/types.h
+  ${DEPS_GHIDRA}/include/userop.hh
+  ${DEPS_GHIDRA}/include/variable.hh
+  ${DEPS_GHIDRA}/include/varmap.hh
+  ${DEPS_GHIDRA}/include/varnode.hh
+  ${DEPS_GHIDRA}/include/xml.hh
   DESTINATION
   include/coronium
 )
 
 # BUILD CPU SPEC FILES
-file(COPY ${CMAKE_SOURCE_DIR}/processors DESTINATION ${CMAKE_BINARY_DIR}/)
+file(COPY ${DEPS_GHIDRA}/processors DESTINATION ${CMAKE_BINARY_DIR}/)
 add_custom_target(
   cpus
   COMMAND slgh-compile -a processors
