@@ -90,8 +90,9 @@ findFile (std::string fname, std::string dir) -> std::string
 
 // CONSTRUCTORS/DESTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 Coronium::Coronium (std::string id)
+
 {
-    _lang_id = id;
+    _lang_id = id;              // the 'id' field found in an ldef file.
 
     // id's are of the form <cpu>:<endianess>:<size>:<variant>
     _cpu = id.substr (0, id.find (":"));
@@ -119,6 +120,7 @@ Coronium::Coronium (std::string id)
 }
 
 Coronium::~Coronium()
+
 {
     if (context)
         delete context;
@@ -167,53 +169,54 @@ Coronium::importContexts (ContextDatabase* cdb) -> void
 
 // PUBLIC METHODS -----------------------------------------------------------------
 auto
-Coronium::load (const std::string& f, LoadImage* load) -> void
+Coronium::load (const std::string& f) -> void
 
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
+    loader = new FileLoadImage (f, "default");
     context = new ContextInternal();      // Create a processor context
-
-    if (!load) {
-        loader = new DefaultLoadImage (f);
-    }
-
     trans = new Sleigh (loader, context); // Instantiate the translator
+
     trans->initialize (docstorage);
-
-    if (!load) {
-        dynamic_cast<DefaultLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
-    }
-
+    dynamic_cast<FileLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
     importContexts (context);
 }
 
 // --------------------------------------------------------------------------------
 auto
-Coronium::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load) -> void
+Coronium::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void
 
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
-    context = new ContextInternal();      // Create a processor context
+    context = new ContextInternal();
+    loader = new BufferLoadImage (baseaddr, imgbuffer, imgsize);
+    trans = new Sleigh (loader, context);
 
-    if (!load) {
-        loader = new DefaultLoadImage (baseaddr, imgbuffer, imgsize);
-    }
-
-    trans = new Sleigh (loader, context); // Instantiate the translator
     trans->initialize (docstorage);
-
-    if (!load) {
-        dynamic_cast<DefaultLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
-    }
-
+    dynamic_cast<BufferLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
     importContexts (context);
 }
 
-// --------------------------------------------------------------------------------
+/**
+ * @brief exports all the asm and pcode instructions found within the range
+ *        [addr, addr + len)
+ *
+ * This method relies upon AssemblyRaw::dump and PcodeRaw::dump. Those two
+ * methods perform the actual decoding and hold the storage of assembly and
+ * pcode data. This method combines the side effects of both those methods.
+ *
+ * NOTE: Different len's may result in the same number of instructions decoded.
+ * This is because some lengths might end in the middle of an instruction. In
+ * such situations the decoder cannot discern the instruction and so drops it.
+ *
+ * @param[in] addr Start address.
+ * @param[in] len  Number of bytes to decode.
+ * @return A vector of Instructions containing raw assembly and raw pcode.
+ */
 auto
 Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
 
@@ -244,6 +247,7 @@ Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
  * AssemblyRaw
  *
  */
+
 auto
 AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-> void
 
@@ -258,6 +262,7 @@ AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-
  * PcodeRaw
  *
  */
+
 auto
 PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
 
@@ -275,45 +280,28 @@ PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeDat
 
 /*
  *
- * DefaultLoadImage
+ * BufferLoadImage
  *
  */
 
 // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-DefaultLoadImage::DefaultLoadImage (const string& filename) : LoadImage (filename)
-{
-    type = BINARY_FILE;
-    vma = 0;
-    spaceid = (AddrSpace*)0;
-    binaryFile = fopen (filename.c_str(), "r+b");
-    if (!binaryFile) {
-        std::string err = "unable to open file" + filename;
-        perror (err.c_str());
-        exit (EXIT_FAILURE);
-    }
-    fseek (binaryFile, 0L, SEEK_END);
-    bsize = ftell (binaryFile);
-    fseek (binaryFile, 0L, SEEK_SET);
-}
+BufferLoadImage::BufferLoadImage (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
 
-DefaultLoadImage::DefaultLoadImage (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
 {
-    type = BINARY_BUFFER;
     vma = addr;
     binaryBuffer = buffer;
-    bsize = sz;
+    binsize = sz;
 }
 
-DefaultLoadImage::~DefaultLoadImage ()
+BufferLoadImage::~BufferLoadImage ()
+
 {
-    if (type == BINARY_FILE) {
-        fclose (binaryFile);
-    }
+
 }
 
 // PUBLIC METHODS -----------------------------------------------------------------
 auto
-DefaultLoadImage::adjustVma (long adjust) -> void
+BufferLoadImage::adjustVma (long adjust) -> void
 
 {
     adjust = AddrSpace::addressToByte (adjust, spaceid->getWordSize());
@@ -322,7 +310,7 @@ DefaultLoadImage::adjustVma (long adjust) -> void
 
 // --------------------------------------------------------------------------------
 auto
-DefaultLoadImage::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
+BufferLoadImage::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
 
 {
     // Get the offset relative to the base address.
@@ -330,26 +318,18 @@ DefaultLoadImage::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
     uintb readlen;
     int4 rest = len;
 
-    if (curaddr >= bsize) {
+    if (curaddr >= binsize) {
         // initial address not within binary.
         goto ERROR;
     }
     // ensure that the amount read is within the addr space bounds of the binary.
-    readlen = (curaddr + len > bsize) ? bsize - curaddr : len;
+    readlen = (curaddr + len > binsize) ? binsize - curaddr : len;
 
-    if (this->type == BINARY_FILE) {
-        fseek (binaryFile, curaddr, SEEK_SET);
-        curaddr += fread (ptr, sizeof (uint1), readlen, binaryFile);
-        rest -= readlen;
-    }
+    memcpy (ptr, &binaryBuffer[curaddr], readlen);
+    curaddr += readlen;
+    rest -= readlen;
 
-    if (this->type == BINARY_BUFFER) {
-        memcpy (ptr, &binaryBuffer[curaddr], readlen);
-        curaddr += readlen;
-        rest -= readlen;
-    }
-
-    if (curaddr >= bsize) {
+    if (curaddr >= binsize) {
         memset (ptr + len - rest, 0, rest);
     }
 
@@ -362,6 +342,19 @@ ERROR:
         std::cout << errmsg.str() << std::endl;
         exit (EXIT_FAILURE);
     }
+}
+
+/*
+ *
+ * FileLoadImage
+ *
+ */
+
+// CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+FileLoadImage::FileLoadImage (const string& f, const string& t) : LoadImageBfd (f, t)
+
+{
+    this->open();
 }
 
 // |EOF|--------------------------------------------------------------------------|

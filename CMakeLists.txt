@@ -91,7 +91,7 @@ if(BFD)
     include/coronium
   )
 else()
-  message(STATUS "WARNING: unable to find libbfd, bfd dependent content will be omitted from install.\n")
+  message(FATAL_ERROR "unable to find requirement: libbfd .\n")
 endif()
 
 if(NOT CMAKE_INSTALL_LIBDIR)
@@ -109,7 +109,6 @@ set_target_properties(
 add_subdirectory(${DEPS_GHIDRA}/src)
 add_subdirectory(${CMAKE_SOURCE_DIR}/src)
 add_dependencies(slgh-compile pcodeparse xml)
-#include_directories(${CMAKE_SOURCE_DIR}/include/coronium)
 
 # SLEIGH COMPILER
 install(

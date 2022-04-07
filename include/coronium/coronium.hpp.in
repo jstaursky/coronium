@@ -38,7 +38,7 @@
 #include <memory>
 
 #include "sleigh.hh"
-#include "loadimage.hh"
+#include "loadimage_bfd.hh"
 #include "xml.hh"
 #include "globalcontext.hh"
 #include "translate.hh"
@@ -57,15 +57,13 @@ char const* cpus_directory = "@SLA_LOCATION@";
  * @class PcodeRaw
  * @brief Used to get raw pcode.
  */
-class PcodeRaw : public PcodeEmit
-{
+class PcodeRaw : public PcodeEmit {
 public:
     Address addr;
     OpCode opc;
     bool hasOutvar = false;
     VarnodeData outvar;
     std::vector<VarnodeData> vars;
-
     virtual void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize);
 };
 
@@ -73,65 +71,64 @@ public:
  * @class AssemblyRaw
  * @brief Used to get assembly.
  */
-class AssemblyRaw : public AssemblyEmit
-{
+class AssemblyRaw : public AssemblyEmit {
 public:
     Address address;
     std::string mnemonic;
     std::string body;
-
-    virtual void dump (const Address& addr, const string& mnem, const string& body);
-};
-
-/**
- * @class DefaultLoadImage
- * @brief the LoadImage class used when none is provided.
- */
-class DefaultLoadImage : public LoadImage
-{
-    enum
-    { BINARY_FILE, BINARY_BUFFER, NO_INIT } type = NO_INIT;
-    union {
-        uint1* binaryBuffer = nullptr;
-        FILE*  binaryFile;
-    };
-    int4 bsize;                 // size of binary
-    AddrSpace* spaceid;
-    uintb vma;                  // virtual memory base address.
-public:
-    DefaultLoadImage (const string& filename);             // For opening files
-    DefaultLoadImage (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
-    auto attachToSpace (AddrSpace* id) -> void { spaceid = id; }
-    virtual ~DefaultLoadImage ();
-    virtual void adjustVma (long adjust);
-    virtual string getArchType (void) const { return "unknown"; };
-    virtual void loadFill (uint1* ptr, int4 size, const Address& addr);
+    virtual void dump (const Address& addr, const std::string& mnem, const std::string& body);
 };
 
 /**
  * @class Instruction
  * @brief All content relating to a single instruction.
  */
-struct Instruction
-{
+struct Instruction {
     AssemblyRaw assembly;
     PcodeRaw pcode;
     int4 size;                  // length of the instruction.
-
     Instruction (AssemblyRaw _asm, PcodeRaw _pcode) : assembly (_asm), pcode (_pcode)
     {};
+};
+
+/**
+ * @class BufferLoadImage
+ * @brief TODO
+ */
+class BufferLoadImage : public LoadImage {
+private:
+    uint1* binaryBuffer = nullptr;
+    int4 binsize;                 // size of binary
+    AddrSpace* spaceid;
+    uintb vma;                  // virtual memory base address.
+public:
+    BufferLoadImage (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
+    auto attachToSpace (AddrSpace* id) -> void { spaceid = id; }
+    virtual ~BufferLoadImage ();
+    void adjustVma (long adjust) override;
+    std::string getArchType (void) const override { return "unknown"; };
+    void loadFill (uint1* ptr, int4 size, const Address& addr) override;
+};
+
+/**
+ * @class FileLoadImage
+ * @brief TODO
+ */
+class FileLoadImage : public LoadImageBfd {
+public:
+    FileLoadImage(const std::string &f, const std::string &t);
+    virtual ~FileLoadImage() {}
 };
 
 /**
  * @class Coronium
  * @brief Primary class for storing + managing processor information.
  */
-class Coronium
-{
+class Coronium {
+private:
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
     std::string _cpu_dir {""};  // NOTE does not end in '/'
-
     mutable std::unordered_map<std::string, std::string>
     ldefs {
         {"processor", ""},
@@ -144,12 +141,10 @@ class Coronium
         {"manualindexfile", ""}, // .idx
         {"id", ""}
     };
-
     DocumentStorage docstorage;
     ContextDatabase* context = nullptr;
     LoadImage* loader = nullptr;
     Translate* trans = nullptr;
-
 public:
     Coronium (std::string id);
     virtual ~Coronium();
@@ -157,18 +152,16 @@ public:
     operator std::string () const { return (_cpu_dir + "/" + ldefs["slafile"]); }
     operator Translate* () const { return trans; }
 
-    auto load (const std::string& f, LoadImage* load = nullptr) -> void;
-    auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize, LoadImage* load = nullptr) -> void;
+    auto load (const std::string& f) -> void;
+    auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
     auto dump (uintb addr, int4 len = 1) -> std::vector<Instruction>;
-
 private:
     /**
      * import the processorspec (.pspec) context definitions.
      */
     auto
     importContexts (ContextDatabase* cdb) -> void;
-
 };
 
 
