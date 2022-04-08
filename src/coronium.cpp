@@ -175,12 +175,12 @@ Coronium::load (const std::string& f) -> void
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
-    loader = new FileLoadImage (f, "default");
+    loader = new Binary (f, "default");
     context = new ContextInternal();      // Create a processor context
     trans = new Sleigh (loader, context); // Instantiate the translator
 
     trans->initialize (docstorage);
-    dynamic_cast<FileLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
+    dynamic_cast<Binary*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
     importContexts (context);
 }
 
@@ -193,12 +193,38 @@ Coronium::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
     context = new ContextInternal();
-    loader = new BufferLoadImage (baseaddr, imgbuffer, imgsize);
+    loader = new BinaryRaw (baseaddr, imgbuffer, imgsize);
     trans = new Sleigh (loader, context);
 
     trans->initialize (docstorage);
-    dynamic_cast<BufferLoadImage*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
+    dynamic_cast<BinaryRaw*> (loader)->attachToSpace (trans->getDefaultCodeSpace());
     importContexts (context);
+}
+
+// --------------------------------------------------------------------------------
+auto
+Coronium::getBinaryImage() const -> Binary*
+
+{
+    auto* ret = dynamic_cast<Binary*> (loader);
+    if (ret) return ret;
+    else {
+        std::cerr << "binary did not originate from a file" << std::endl;
+        exit (EXIT_FAILURE);
+    }
+}
+
+// --------------------------------------------------------------------------------
+auto
+Coronium::getBinaryRawImage() const -> BinaryRaw*
+
+{
+    auto* ret = dynamic_cast<BinaryRaw*> (loader);
+    if (ret) return ret;
+    else {
+        std::cerr << "binary originates from a file" << std::endl;
+        exit (EXIT_FAILURE);
+    }
 }
 
 /**
@@ -280,12 +306,12 @@ PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeDat
 
 /*
  *
- * BufferLoadImage
+ * BinaryRaw
  *
  */
 
 // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-BufferLoadImage::BufferLoadImage (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
+BinaryRaw::BinaryRaw (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
 
 {
     vma = addr;
@@ -293,7 +319,7 @@ BufferLoadImage::BufferLoadImage (uintb addr, uint1* buffer, int4 sz) : LoadImag
     binsize = sz;
 }
 
-BufferLoadImage::~BufferLoadImage ()
+BinaryRaw::~BinaryRaw ()
 
 {
 
@@ -301,7 +327,7 @@ BufferLoadImage::~BufferLoadImage ()
 
 // PUBLIC METHODS -----------------------------------------------------------------
 auto
-BufferLoadImage::adjustVma (long adjust) -> void
+BinaryRaw::adjustVma (long adjust) -> void
 
 {
     adjust = AddrSpace::addressToByte (adjust, spaceid->getWordSize());
@@ -310,7 +336,7 @@ BufferLoadImage::adjustVma (long adjust) -> void
 
 // --------------------------------------------------------------------------------
 auto
-BufferLoadImage::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
+BinaryRaw::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
 
 {
     // Get the offset relative to the base address.
@@ -344,17 +370,32 @@ ERROR:
     }
 }
 
+// --------------------------------------------------------------------------------
+auto
+BinaryRaw::dump (Coronium* coro, uintb addr, int4 len) -> std::vector<Instruction>
+
+{
+    return coro->dump (addr, len);
+}
+
 /*
  *
- * FileLoadImage
+ * Binary
  *
  */
 
 // CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-FileLoadImage::FileLoadImage (const string& f, const string& t) : LoadImageBfd (f, t)
+Binary::Binary (const string& f, const string& t) : LoadImageBfd (f, t)
 
 {
     this->open();
+}
+
+// --------------------------------------------------------------------------------
+auto
+Binary::dump (Coronium* coro, uintb addr, int4 len) -> std::vector<Instruction>
+{
+    return coro->dump (addr, len);
 }
 
 // |EOF|--------------------------------------------------------------------------|

@@ -25,27 +25,28 @@
 
 #include <iostream>
 
-int main(int argc, char **argv)
+int main (int argc, char** argv)
 
 {
-  // For fun try playing other cpu interpretations of bytes. Try:
-  // 8085:LE:16:default
-  uint1 payload[] = {
-      0x66, 0x68, 0xeb, 0x05, 0x31, 0xc0,
-      0x74, 0xfa, 0xe8, 0xff, 0xc0, 0x67, 0x48
-  };
+    // For fun try playing other cpu interpretations of bytes. Try:
+    // 8085:LE:16:default
+    uint1 payload[] = {
+        0x66, 0x68, 0xeb, 0x05, 0x31, 0xc0,
+        0x74, 0xfa, 0xe8, 0xff, 0xc0, 0x67, 0x48
+    };
 
-  auto coro = coronium::Coronium ("x86:LE:32:default");
+    auto coro = coronium::Coronium ("x86:LE:32:default");
 
-  std::cout << coro.getArchType () << std::endl;
-  coro.load (0x00000000, payload, sizeof (payload));
+    std::cout << coro.getArchType () << std::endl;
+    coro.load (0x00000000, payload, sizeof (payload));
 
-  std::vector<coronium::Instruction> insn = coro.dump(0x00000000, sizeof(payload));
+    coronium::BinaryRaw* bin = coro.getBinaryRawImage ();
+    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00000000, 1);
 
-  for (auto i : insn) {
-      std::cout << i.assembly.mnemonic << " "
-                << i.assembly.body
-                << std::endl;
-  }
+    for (auto i : insn) {
+        std::cout << i.assembly.mnemonic << " "
+                  << i.assembly.body
+                  << std::endl;
+    }
 
 }

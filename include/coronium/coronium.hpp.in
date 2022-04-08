@@ -50,7 +50,8 @@ namespace coronium {
 
 // NOTE overwritten if the SLA_DIR environment variable is defined.
 char const* cpus_directory = "@SLA_LOCATION@";
-
+// forward declare(s)
+class Coronium;
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 /**
@@ -92,40 +93,47 @@ struct Instruction {
 };
 
 /**
- * @class BufferLoadImage
- * @brief TODO
+ * @class BinaryRaw
+ * @brief LoadImage class for dealing with raw hex buffers.
  */
-class BufferLoadImage : public LoadImage {
+class BinaryRaw : public LoadImage {
 private:
     uint1* binaryBuffer = nullptr;
-    int4 binsize;                 // size of binary
+    int4 binsize;               // size of binary
     AddrSpace* spaceid;
     uintb vma;                  // virtual memory base address.
 public:
-    BufferLoadImage (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
+    BinaryRaw (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
+    BinaryRaw (BinaryRaw* other) = delete;
     auto attachToSpace (AddrSpace* id) -> void { spaceid = id; }
-    virtual ~BufferLoadImage ();
+    virtual ~BinaryRaw ();
     void adjustVma (long adjust) override;
     std::string getArchType (void) const override { return "unknown"; };
     void loadFill (uint1* ptr, int4 size, const Address& addr) override;
+    auto dump (Coronium* coro, uintb addr, int4 len = 1) -> std::vector<Instruction>;
 };
 
 /**
- * @class FileLoadImage
- * @brief TODO
+ * @class Binary
+ * @brief LoadImage class for dealing with Binary Files.
  */
-class FileLoadImage : public LoadImageBfd {
+class Binary : public LoadImageBfd {
 public:
-    FileLoadImage(const std::string &f, const std::string &t);
-    virtual ~FileLoadImage() {}
+    Binary (const std::string& f, const std::string& t);
+    Binary (Binary* other) = delete; // shallow copies issue w/ thebfd.
+    virtual ~Binary() {}
+    auto dump (Coronium* coro, uintb addr, int4 len = 1) -> std::vector<Instruction>;
 };
 
 /**
  * @class Coronium
- * @brief Primary class for storing + managing processor information.
+ * @brief stores + manages processor information. Friend classes need to reference this to
+ *        extract import context and translation info.
  */
 class Coronium {
 private:
+    friend class Binary;        // files
+    friend class BinaryRaw;     // buffers
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
     std::string _cpu_dir {""};  // NOTE does not end in '/'
@@ -143,27 +151,20 @@ private:
     };
     DocumentStorage docstorage;
     ContextDatabase* context = nullptr;
-    LoadImage* loader = nullptr;
+    mutable LoadImage* loader = nullptr;
     Translate* trans = nullptr;
 public:
     Coronium (std::string id);
     virtual ~Coronium();
-
-    operator std::string () const { return (_cpu_dir + "/" + ldefs["slafile"]); }
-    operator Translate* () const { return trans; }
-
+    auto getBinaryImage() const -> Binary*;
+    auto getBinaryRawImage() const -> BinaryRaw*;
     auto load (const std::string& f) -> void;
     auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
-    auto dump (uintb addr, int4 len = 1) -> std::vector<Instruction>;
 private:
-    /**
-     * import the processorspec (.pspec) context definitions.
-     */
-    auto
-    importContexts (ContextDatabase* cdb) -> void;
+    auto dump (uintb addr, int4 len = 1) -> std::vector<Instruction>;
+    auto importContexts (ContextDatabase* cdb) -> void;
 };
-
 
 } // END OF NAMESPACE
 #endif
