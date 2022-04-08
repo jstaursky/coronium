@@ -27,6 +27,11 @@
 
 using namespace coronium;
 
+// Global variable 'cpus_directory' is defined in this file.
+namespace coronium {
+char const* cpus_directory;
+}
+
 /*
  *
  * static functions
@@ -92,6 +97,8 @@ findFile (std::string fname, std::string dir) -> std::string
 Coronium::Coronium (std::string id)
 
 {
+    setCpuDirectory ();         // initialize global 'cpus_directory' to default value
+
     _lang_id = id;              // the 'id' field found in an ldef file.
 
     // id's are of the form <cpu>:<endianess>:<size>:<variant>
@@ -99,7 +106,7 @@ Coronium::Coronium (std::string id)
 
     char const* env = getenv ("SLA_DIR");
     if (env) {
-        coronium::cpus_directory = new char[strlen (env) + 1];
+        cpus_directory = new char[strlen (env) + 1];
         memcpy ((void*)cpus_directory, (void*)env, strlen (env) + 1);
     }
 
@@ -131,6 +138,23 @@ Coronium::~Coronium()
 }
 
 // PRIVATE METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+/**
+ * @brief This function is necessary to prevent duplicate symbols error.
+ *
+ * global variable 'cpus_directory' cannot be set in the header file when there are
+ * multiple cpp files that include it. Since coronium.hpp is a compile time header this
+ * makes it complicated to set globals to compile time constants. This is the current work
+ * around (set compile-time constant as the default value in header).
+ */
+auto
+Coronium::setCpuDirectory (std::string dir) -> void
+{
+    cpus_directory = new char[dir.length() + 1];
+    memcpy((void*)cpus_directory, (void*)dir.c_str(), dir.length() + 1);
+}
+
+// --------------------------------------------------------------------------------
 auto
 Coronium::importContexts (ContextDatabase* cdb) -> void
 
@@ -165,6 +189,47 @@ Coronium::importContexts (ContextDatabase* cdb) -> void
             std::cerr << "Warning: " << e.explain << std::endl;
         }
     }
+}
+
+/**
+ * @brief exports all the asm and pcode instructions found within the range
+ *        [addr, addr + len)
+ *
+ * This method relies upon AssemblyRaw::dump and PcodeRaw::dump. Those two
+ * methods perform the actual decoding and hold the storage of assembly and
+ * pcode data. This method combines the side effects of both those methods.
+ *
+ * NOTE: Different len's may result in the same number of instructions decoded.
+ * This is because some lengths might end in the middle of an instruction. In
+ * such situations the decoder cannot discern the instruction and so drops it.
+ *
+ * @param[in] addr Start address.
+ * @param[in] len  Number of bytes to decode.
+ * @return A vector of Instructions containing raw assembly and raw pcode.
+ */
+auto
+Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
+
+{
+    std::vector<Instruction> result;
+
+    AssemblyRaw asm_emit;
+    PcodeRaw pcode_emit;
+
+    Address pos (trans->getDefaultCodeSpace(), addr);
+    Address finish (trans->getDefaultCodeSpace(), addr + len);
+
+    int4 length;
+
+    while (pos < finish) {
+        trans->printAssembly (asm_emit, pos);
+        length = trans->oneInstruction (pcode_emit, pos);
+        auto insn = Instruction (asm_emit, pcode_emit);
+        insn.size = length;
+        result.push_back (insn);
+        pos = pos + length;
+    }
+    return result;
 }
 
 // PUBLIC METHODS -----------------------------------------------------------------
@@ -227,47 +292,6 @@ Coronium::getBinaryRawImage() const -> BinaryRaw*
     }
 }
 
-/**
- * @brief exports all the asm and pcode instructions found within the range
- *        [addr, addr + len)
- *
- * This method relies upon AssemblyRaw::dump and PcodeRaw::dump. Those two
- * methods perform the actual decoding and hold the storage of assembly and
- * pcode data. This method combines the side effects of both those methods.
- *
- * NOTE: Different len's may result in the same number of instructions decoded.
- * This is because some lengths might end in the middle of an instruction. In
- * such situations the decoder cannot discern the instruction and so drops it.
- *
- * @param[in] addr Start address.
- * @param[in] len  Number of bytes to decode.
- * @return A vector of Instructions containing raw assembly and raw pcode.
- */
-auto
-Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
-
-{
-    std::vector<Instruction> result;
-
-    AssemblyRaw asm_emit;
-    PcodeRaw pcode_emit;
-
-    Address pos (trans->getDefaultCodeSpace(), addr);
-    Address finish (trans->getDefaultCodeSpace(), addr + len);
-
-    int4 length;
-
-    while (pos < finish) {
-        trans->printAssembly (asm_emit, pos);
-        length = trans->oneInstruction (pcode_emit, pos);
-        auto insn = Instruction (asm_emit, pcode_emit);
-        insn.size = length;
-        result.push_back (insn);
-        pos = pos + length;
-    }
-    return result;
-}
-
 /*
  *
  * AssemblyRaw
@@ -302,100 +326,6 @@ PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeDat
     for (auto i = 0; i != isize; ++i) {
         this->vars.push_back (vars[i]);
     }
-}
-
-/*
- *
- * BinaryRaw
- *
- */
-
-// CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-BinaryRaw::BinaryRaw (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
-
-{
-    vma = addr;
-    binaryBuffer = buffer;
-    binsize = sz;
-}
-
-BinaryRaw::~BinaryRaw ()
-
-{
-
-}
-
-// PUBLIC METHODS -----------------------------------------------------------------
-auto
-BinaryRaw::adjustVma (long adjust) -> void
-
-{
-    adjust = AddrSpace::addressToByte (adjust, spaceid->getWordSize());
-    vma += adjust;
-}
-
-// --------------------------------------------------------------------------------
-auto
-BinaryRaw::loadFill (uint1* ptr, int4 len, const Address& addr) -> void
-
-{
-    // Get the offset relative to the base address.
-    uintb curaddr = addr.getOffset() - vma;
-    uintb readlen;
-    int4 rest = len;
-
-    if (curaddr >= binsize) {
-        // initial address not within binary.
-        goto ERROR;
-    }
-    // ensure that the amount read is within the addr space bounds of the binary.
-    readlen = (curaddr + len > binsize) ? binsize - curaddr : len;
-
-    memcpy (ptr, &binaryBuffer[curaddr], readlen);
-    curaddr += readlen;
-    rest -= readlen;
-
-    if (curaddr >= binsize) {
-        memset (ptr + len - rest, 0, rest);
-    }
-
-ERROR:
-    // wait to error out until we are unable to read any bytes.
-    if (len == rest) {
-        ostringstream errmsg;
-        errmsg << "Unable to load " << dec << len << " bytes at " << addr.getShortcut();
-        addr.printRaw (errmsg);
-        std::cout << errmsg.str() << std::endl;
-        exit (EXIT_FAILURE);
-    }
-}
-
-// --------------------------------------------------------------------------------
-auto
-BinaryRaw::dump (Coronium* coro, uintb addr, int4 len) -> std::vector<Instruction>
-
-{
-    return coro->dump (addr, len);
-}
-
-/*
- *
- * Binary
- *
- */
-
-// CONSTRUCTORS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-Binary::Binary (const string& f, const string& t) : LoadImageBfd (f, t)
-
-{
-    this->open();
-}
-
-// --------------------------------------------------------------------------------
-auto
-Binary::dump (Coronium* coro, uintb addr, int4 len) -> std::vector<Instruction>
-{
-    return coro->dump (addr, len);
 }
 
 // |EOF|--------------------------------------------------------------------------|

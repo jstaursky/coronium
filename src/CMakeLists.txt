@@ -1,9 +1,14 @@
 #
 # Manage coronium source file separately.
 #
-add_library(coronium_impl OBJECT coronium.cpp)
+add_library(
+  coronium_impl
+  OBJECT
+  coronium.cpp
+  loadbinary.cpp
+)
 
-if (BUILD_SHARED_LIBS)
+if(BUILD_SHARED_LIBS)
   set_property(TARGET coronium_impl PROPERTY POSITION_INDEPENDENT_CODE ON)
 endif()
 

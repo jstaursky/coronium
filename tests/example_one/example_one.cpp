@@ -1,22 +1,24 @@
-/* ###
- * IP: GHIDRA
- * NOTE: mentions GNU libbfd, the hard-coded binary is a toy function that generates primes
+/**
+ * @file example_one.cpp
+ * Copyright (C) 2022 Joe Staursky
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * @section LICENSE
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * This file is part of coronium.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * coronium is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option) any later
+ * version.
+ *
+ * coronium is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE. See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * coronium. If not, see <https://www.gnu.org/licenses/>.
  */
-// Dump the raw pcode instructions
 
-// Root include for parsing using SLEIGH
 #include <coronium/coronium.hpp>
 #include <coronium/types.h>
 #include <coronium/loadimage.hh>
