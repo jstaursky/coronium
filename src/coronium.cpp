@@ -211,14 +211,14 @@ Coronium::load (const std::string& f) -> void
 
 // --------------------------------------------------------------------------------
 auto
-Coronium::load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void
+Coronium::load (uint1* imgbuffer, int4 imgsize) -> void
 
 {
     std::string slafilepath = _cpu_dir + "/" + ldefs["slafile"];
     Element* sleighroot = docstorage.openDocument (slafilepath)->getRoot();
     docstorage.registerTag (sleighroot);
     context = new ContextInternal();
-    loader = new BinaryRaw (baseaddr, imgbuffer, imgsize);
+    loader = new BinaryRaw (imgbuffer, imgsize);
     trans = new Sleigh (loader, context);
 
     trans->initialize (docstorage);
@@ -265,24 +265,22 @@ Coronium::getBinaryRawImage() const -> BinaryRaw*
  * @return A vector of Instructions containing raw assembly and raw pcode.
  */
 auto
-Coronium::disassemble (uintb addr, uint4 ninsns) -> std::vector<Instruction>
+Coronium::disassemble (Address addr, uint4 ninsns) -> std::vector<Instruction>
 
 {
     std::vector<Instruction> result;
     AssemblyRaw asm_emit;
     PcodeRaw pcode_emit;
 
-    Address pos (trans->getDefaultCodeSpace(), addr);
-
     int4 length;
     while (result.size() != ninsns)
     {
-        length    = trans->printAssembly (asm_emit, pos);
-        length    = trans->oneInstruction (pcode_emit, pos);
+        length    = trans->printAssembly (asm_emit, addr);
+        length    = trans->oneInstruction (pcode_emit, addr);
         auto insn = Instruction (asm_emit, pcode_emit);
         insn.size = length;
         result.push_back(insn);
-        pos = pos + length;
+        addr = addr + length;
     }
     return result;
 }

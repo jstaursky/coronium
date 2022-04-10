@@ -27,6 +27,9 @@
 
 #include <iostream>
 
+using namespace coronium;
+using namespace std;
+
 int main (int argc, char** argv)
 
 {
@@ -37,26 +40,47 @@ int main (int argc, char** argv)
         0x74, 0xfa, 0xe8, 0xff, 0xc0, 0x67, 0x48
     };
 
-    auto coro = coronium::Coronium ("x86:LE:32:default");
+    auto coro_ex1 = Coronium ("x86:LE:32:default");
 
-    std::cout << coro.getArchType () << std::endl;
-    coro.load("testfile");
-//    coro.load (0x00000000, payload, sizeof (payload));
+    std::cout << coro_ex1.getArchType () << endl;
+    coro_ex1.load ("testfile");
 
-    coronium::Binary* bin = coro.getBinaryImage ();
+    Binary* bin = coro_ex1.getBinaryImage ();
 
     auto number_of_insns = 3;
-    std::vector<coronium::Instruction> insn = coro.disassemble (0x00001040, number_of_insns);
+    vector<Instruction> insn = coro_ex1.disassemble (bin->getAddress (0x00001040), number_of_insns);
+    for (auto i : insn)
+    {
+        cout << i.assembly.mnemonic << " "
+             << i.assembly.body << endl;
 
-//    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00001040, 3);
+    }
 
-//    coronium::BinaryRaw* bin = coro.getBinaryRawImage ();
-//    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00000000, 3);
+    cout << "----------------------------------------\n";
 
-    for (auto i : insn) {
-        std::cout << i.assembly.mnemonic << " "
-                  << i.assembly.body
-                  << std::endl;
+    vector<Instruction> instr = coro_ex1.dump (bin->getAddressRange (0x00001040, 0x00001040 + 0x10));
+    for (auto i : instr)
+    {
+        cout << i.assembly.mnemonic << " "
+             << i.assembly.body
+             << endl;
+    }
+
+    cout << "----------------------------------------\n";
+
+    {
+        auto coro = Coronium ("x86:LE:32:default");
+        coro.load (payload, sizeof (payload));
+        coronium::BinaryRaw* bin = coro.getBinaryRawImage ();
+        bin->setBaseAddress(0x00000000);
+        vector<coronium::Instruction> insn = coro.dump (bin->getAddressRange (0x00000000, 0x00000000 + sizeof(payload)));
+        for (auto i : insn)
+        {
+            cout << i.assembly.mnemonic << " "
+                 << i.assembly.body
+                 << endl;
+        }
+
     }
 
 }

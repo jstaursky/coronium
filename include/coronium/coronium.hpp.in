@@ -125,9 +125,9 @@ public:
     auto getBinaryImage() const -> Binary*;
     auto getBinaryRawImage() const -> BinaryRaw*;
     auto load (const std::string& f) -> void;
-    auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void;
+    auto load (uint1* imgbuffer, int4 imgsize) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
-    auto disassemble (uintb addr, uint4 ninsns = 1) -> std::vector<Instruction>;
+    auto disassemble (Address addr, uint4 ninsns = 1) -> std::vector<Instruction>;
     auto dump (Range rng) -> std::vector<Instruction>;
 private:
     auto importContexts (ContextDatabase* cdb) -> void;

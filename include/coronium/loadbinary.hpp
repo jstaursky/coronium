@@ -66,7 +66,7 @@ private:
     AddrSpace* spaceid;
     uintb vma;                  // virtual memory base address.
 public:
-    BinaryRaw (uintb addr, uint1* buffer, int4 sz); // For opening raw buffers
+    BinaryRaw (uint1* buffer, int4 sz); // For opening raw buffers
     BinaryRaw (BinaryRaw* other) = delete;
     virtual ~BinaryRaw ();
     // pure virtual  overrides ----------------
@@ -75,6 +75,8 @@ public:
     void adjustVma(long adjust) override;
     // ----------------------------------------
     auto attachToSpace (AddrSpace* id) -> void { spaceid = id; }
+    void setBaseAddress (uintb addr);
+    Address getAddress (uintb addr) { return Address (spaceid, addr); }
     Range getAddressRange (uintb faddr, uintb laddr);
 };
 
@@ -108,9 +110,8 @@ public:
     void open(void);		// Open any descriptors
     void close(void);		// Close any descriptor
     void attachToSpace(AddrSpace *id) { spaceid = id; }
-
-
-
+    Address getAddress (uintb addr) { return Address (spaceid, addr); }
+    Range getAddressRange (uintb faddr, uintb laddr);
 };
 
 

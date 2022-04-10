@@ -31,10 +31,10 @@ using namespace coronium;
  * BinaryRaw
  *
  */
-BinaryRaw::BinaryRaw (uintb addr, uint1* buffer, int4 sz) : LoadImage ("nofile")
+BinaryRaw::BinaryRaw (uint1* buffer, int4 sz) : LoadImage ("nofile")
 
 {
-    vma = addr;
+    vma = 0;
     binaryBuffer = buffer;
     binsize = sz;
 }
@@ -46,6 +46,14 @@ BinaryRaw::~BinaryRaw ()
 }
 
 // PUBLIC METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+auto
+BinaryRaw::setBaseAddress(uintb baseaddr) -> void
+
+{
+    adjustVma(baseaddr);
+}
+
+// --------------------------------------------------------------------------------
 auto
 BinaryRaw::adjustVma (long adjust) -> void
 
@@ -256,6 +264,14 @@ Binary::adjustVma(long adjust) -> void
         s->vma += adjust;
         s->lma += adjust;
     }
+}
+
+// --------------------------------------------------------------------------------
+auto
+Binary::getAddressRange (uintb faddr, uintb laddr) -> Range
+
+{
+    return Range (this->spaceid, faddr, laddr);
 }
 
 // --------------------------------------------------------------------------------
