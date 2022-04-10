@@ -110,6 +110,7 @@ Coronium::Coronium (std::string id)
         memcpy ((void*)cpus_directory, (void*)env, strlen (env) + 1);
     }
 
+    // find language definitions ("ldefs").
     std::vector<std::string> filelist;
     getFiles (".ldefs", cpus_directory, &filelist);
     for (auto& f : filelist) {
@@ -191,48 +192,7 @@ Coronium::importContexts (ContextDatabase* cdb) -> void
     }
 }
 
-/**
- * @brief exports all the asm and pcode instructions found within the range
- *        [addr, addr + len)
- *
- * This method relies upon AssemblyRaw::dump and PcodeRaw::dump. Those two
- * methods perform the actual decoding and hold the storage of assembly and
- * pcode data. This method combines the side effects of both those methods.
- *
- * NOTE: Different len's may result in the same number of instructions decoded.
- * This is because some lengths might end in the middle of an instruction. In
- * such situations the decoder cannot discern the instruction and so drops it.
- *
- * @param[in] addr Start address.
- * @param[in] len  Number of bytes to decode.
- * @return A vector of Instructions containing raw assembly and raw pcode.
- */
-auto
-Coronium::dump (uintb addr, int4 len) -> std::vector<Instruction>
-
-{
-    std::vector<Instruction> result;
-
-    AssemblyRaw asm_emit;
-    PcodeRaw pcode_emit;
-
-    Address pos (trans->getDefaultCodeSpace(), addr);
-    Address finish (trans->getDefaultCodeSpace(), addr + len);
-
-    int4 length;
-
-    while (pos < finish) {
-        trans->printAssembly (asm_emit, pos);
-        length = trans->oneInstruction (pcode_emit, pos);
-        auto insn = Instruction (asm_emit, pcode_emit);
-        insn.size = length;
-        result.push_back (insn);
-        pos = pos + length;
-    }
-    return result;
-}
-
-// PUBLIC METHODS -----------------------------------------------------------------
+// PUBLIC METHODS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 auto
 Coronium::load (const std::string& f) -> void
 
@@ -292,12 +252,72 @@ Coronium::getBinaryRawImage() const -> BinaryRaw*
     }
 }
 
+/**
+ * @brief exports ninsns ("n instructions") asm and pcode instructions.
+ *
+ *
+ * This method relies upon AssemblyRaw::dump and PcodeRaw::dump. Those two
+ * methods perform the actual decoding and hold the storage of assembly and
+ * pcode data. This method combines the side effects of both those methods.
+ *
+ * @param[in] addr Start address.
+ * @param[in] ninsns Number of instructions to decode.
+ * @return A vector of Instructions containing raw assembly and raw pcode.
+ */
+auto
+Coronium::disassemble (uintb addr, uint4 ninsns) -> std::vector<Instruction>
+
+{
+    std::vector<Instruction> result;
+    AssemblyRaw asm_emit;
+    PcodeRaw pcode_emit;
+
+    Address pos (trans->getDefaultCodeSpace(), addr);
+
+    int4 length;
+    while (result.size() != ninsns)
+    {
+        length    = trans->printAssembly (asm_emit, pos);
+        length    = trans->oneInstruction (pcode_emit, pos);
+        auto insn = Instruction (asm_emit, pcode_emit);
+        insn.size = length;
+        result.push_back(insn);
+        pos = pos + length;
+    }
+    return result;
+}
+
+// --------------------------------------------------------------------------------
+auto
+Coronium::dump (Range rng) -> std::vector<Instruction>
+
+{
+    std::vector<Instruction> result;
+
+    AssemblyRaw asm_emit;
+    PcodeRaw pcode_emit;
+
+    Address pos = rng.getFirstAddr ();
+    Address finish = rng.getLastAddr ();
+
+    int4 length;
+
+    while (pos < finish) {
+        trans->printAssembly (asm_emit, pos);
+        length = trans->oneInstruction (pcode_emit, pos);
+        auto insn = Instruction (asm_emit, pcode_emit);
+        insn.size = length;
+        result.push_back (insn);
+        pos = pos + length;
+    }
+    return result;
+}
+
 /*
  *
  * AssemblyRaw
  *
  */
-
 auto
 AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-> void
 
@@ -312,7 +332,6 @@ AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-
  * PcodeRaw
  *
  */
-
 auto
 PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
 

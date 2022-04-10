@@ -40,10 +40,18 @@ int main (int argc, char** argv)
     auto coro = coronium::Coronium ("x86:LE:32:default");
 
     std::cout << coro.getArchType () << std::endl;
-    coro.load (0x00000000, payload, sizeof (payload));
+    coro.load("testfile");
+//    coro.load (0x00000000, payload, sizeof (payload));
 
-    coronium::BinaryRaw* bin = coro.getBinaryRawImage ();
-    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00000000, 1);
+    coronium::Binary* bin = coro.getBinaryImage ();
+
+    auto number_of_insns = 3;
+    std::vector<coronium::Instruction> insn = coro.disassemble (0x00001040, number_of_insns);
+
+//    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00001040, 3);
+
+//    coronium::BinaryRaw* bin = coro.getBinaryRawImage ();
+//    std::vector<coronium::Instruction> insn = bin->dump (&coro, 0x00000000, 3);
 
     for (auto i : insn) {
         std::cout << i.assembly.mnemonic << " "

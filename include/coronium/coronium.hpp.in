@@ -38,6 +38,7 @@
 #include <memory>
 
 #include "loadbinary.hpp"
+#include "address.hh"
 #include "sleigh.hh"
 #include "loadimage_bfd.hh"
 #include "xml.hh"
@@ -126,10 +127,12 @@ public:
     auto load (const std::string& f) -> void;
     auto load (uintb baseaddr, uint1* imgbuffer, int4 imgsize) -> void;
     auto getArchType() -> std::string { return ldefs["id"]; }
+    auto disassemble (uintb addr, uint4 ninsns = 1) -> std::vector<Instruction>;
+    auto dump (Range rng) -> std::vector<Instruction>;
 private:
-    auto dump (uintb addr, int4 len = 1) -> std::vector<Instruction>;
     auto importContexts (ContextDatabase* cdb) -> void;
 };
 
 } // END OF NAMESPACE
-#endif
+
+#endif /* CORONIUM_HPP  */

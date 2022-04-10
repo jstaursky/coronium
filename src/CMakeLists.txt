@@ -19,4 +19,5 @@ target_include_directories(
   ${CMAKE_SOURCE_DIR}/include/coronium
   ${DEPS_GHIDRA}/include
 )
+target_link_libraries(coronium_impl PRIVATE ${BFD})
 target_link_libraries(coronium $<TARGET_OBJECTS:coronium_impl>)
