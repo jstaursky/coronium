@@ -334,14 +334,49 @@ auto
 PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
 
 {
-    this->addr = addr;
-    this->opc = opc;
+    PcodeStatement pcode_stmt (addr, opc);
     if (outvar != (VarnodeData*)0) {
-        this->hasOutvar = true;
-        this->outvar = *outvar;
+        pcode_stmt.hasOutvar = true;
+        pcode_stmt.outvar = *outvar;
     }
     for (auto i = 0; i != isize; ++i) {
-        this->vars.push_back (vars[i]);
+        pcode_stmt.invars.push_back (vars[i]);
+    }
+    pcode.push_back(pcode_stmt);
+}
+
+auto
+PcodeRaw::print_varnode (std::ostream& s, VarnodeData& vdata) -> void
+
+{
+    const Translate* trans = vdata.space->getTrans ();
+
+    s << '(' << vdata.space->getName() << ',';
+
+    if (vdata.space->getName () == "register") {
+        s << trans->getRegisterName (vdata.space, vdata.offset, vdata.size);
+    } else {
+        vdata.space->printOffset (s, vdata.offset);
+    }
+
+    s << ',' << dec << vdata.size << ')';
+}
+
+auto
+PcodeRaw::print (std::ostream& s) -> void
+
+{
+    for (auto stmt : pcode) {
+        if (stmt.hasOutvar) {
+            print_varnode (s, stmt.outvar);
+            s << " = ";
+        }
+        s << get_opname(stmt.opc);
+        for (auto in : stmt.invars) {
+            s << ' ';
+            print_varnode (s, in);
+        }
+        s << "\n";
     }
 }
 

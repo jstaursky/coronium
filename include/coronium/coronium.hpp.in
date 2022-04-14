@@ -44,6 +44,7 @@
 #include "xml.hh"
 #include "globalcontext.hh"
 #include "translate.hh"
+#include <tuple>
 
 #define CORONIUM_VERSION                                                \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
@@ -57,13 +58,20 @@ extern char const* cpus_directory; // namespaced global
  * @brief Used to get raw pcode.
  */
 class PcodeRaw : public PcodeEmit {
+private:
+    struct PcodeStatement {
+        PcodeStatement (Address adr, OpCode op) : addr(adr), opc(op) {}
+        Address addr;
+        OpCode opc;
+        std::vector<VarnodeData> invars;
+        VarnodeData outvar;
+        bool hasOutvar = false;
+    };
+    std::vector<PcodeStatement> pcode;
+    void print_varnode (std::ostream&, VarnodeData&);
 public:
-    Address addr;
-    OpCode opc;
-    bool hasOutvar = false;
-    VarnodeData outvar;
-    std::vector<VarnodeData> vars;
-    virtual void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize);
+    void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) override;
+    void print (std::ostream&);
 };
 
 /**
@@ -75,7 +83,7 @@ public:
     Address address;
     std::string mnemonic;
     std::string body;
-    virtual void dump (const Address& addr, const std::string& mnem, const std::string& body);
+    void dump (const Address& addr, const std::string& mnem, const std::string& body) override;
 };
 
 /**
