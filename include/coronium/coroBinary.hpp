@@ -1,5 +1,5 @@
 /**
- * @file loadbinary.hpp
+ * @file coroBinary.hpp
  * Copyright (C) 2022 Joe Staursky
  *
  * @section LICENSE
@@ -19,8 +19,8 @@
  * coronium. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef BINARYLOADER_H
-#define BINARYLOADER_H
+#ifndef CORO_BINARY_H
+#define CORO_BINARY_H
 
 #include "loadimage.hh"
 
@@ -29,24 +29,24 @@
 
 #ifndef PACKAGE
   #define PACKAGE
-  #define __LOADBINARY_BFD__DEFINED_PACKAGE
+  #define __CORO_BINARY__DEFINED_PACKAGE
 #endif
 
 #ifndef PACKAGE_VERSION
   #define PACKAGE_VERSION
-  #define __LOADBINARY_BFD__DEFINED_PACKAGE_VERSION
+  #define __CORO_BINARY__DEFINED_PACKAGE_VERSION
 #endif
 
 #include <bfd.h>
 
-#ifdef __LOADBINARY_BFD__DEFINED_PACKAGE
+#ifdef __CORO_BINARY__DEFINED_PACKAGE
   #undef PACKAGE
-  #undef __LOADBINARY_BFD__DEFINED_PACKAGE
+  #undef __CORO_BINARY__DEFINED_PACKAGE
 #endif
 
-#ifdef __LOADBINARY_BFD__DEFINED_PACKAGE_VERSION
+#ifdef __CORO_BINARY__DEFINED_PACKAGE_VERSION
   #undef PACKAGE_VERSION
-  #undef __LOADBINARY_BFD__DEFINED_PACKAGE_VERSION
+  #undef __CORO_BINARY__DEFINED_PACKAGE_VERSION
 #endif
 
 namespace coronium {
@@ -55,7 +55,7 @@ namespace coronium {
 class Coronium;
 class Instruction;
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class BinaryRaw
  * @brief LoadImage class for dealing with raw hex buffers.
  */
@@ -80,7 +80,7 @@ public:
     Range getAddressRange (uintb faddr, uintb laddr);
 };
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class Binary
  * @brief LoadImage class for dealing with Binary Files.
  *
@@ -118,4 +118,4 @@ public:
 }
 
 
-#endif /* BINARYLOADER_H */
+#endif /* CORO_BINARY_H */

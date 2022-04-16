@@ -30,7 +30,7 @@ configure_file(
   ${CMAKE_BINARY_DIR}/coronium.hpp
 )
 install(FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
-install(FILES "${CMAKE_SOURCE_DIR}/include/coronium/loadbinary.hpp" DESTINATION include/coronium)
+install(FILES "${CMAKE_SOURCE_DIR}/include/coronium/coroBinary.hpp" DESTINATION include/coronium)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)

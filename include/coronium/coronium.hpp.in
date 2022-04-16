@@ -25,26 +25,26 @@
 
 #ifndef _CORONIUM_HPP_
 #define _CORONIUM_HPP_
-
-#include <dirent.h>             // DIR
-#include <libgen.h>             // dirname
-#include <stdlib.h>             // getenv
-#include <iostream>
-#include <string>
-#include <vector>
-#include <unordered_map>
+/* system */
 #include <cstring>
+#include <dirent.h>             // DIR
 #include <functional>
+#include <iostream>
+#include <libgen.h>             // dirname
 #include <memory>
-
-#include "loadbinary.hpp"
-#include "address.hh"
-#include "sleigh.hh"
-#include "loadimage_bfd.hh"
-#include "xml.hh"
-#include "globalcontext.hh"
-#include "translate.hh"
+#include <stdlib.h>             // getenv
+#include <string>
 #include <tuple>
+#include <unordered_map>
+#include <vector>
+/* local */
+#include "address.hh"
+#include "globalcontext.hh"
+#include "coroBinary.hpp"
+#include "loadimage_bfd.hh"
+#include "sleigh.hh"
+#include "translate.hh"
+#include "xml.hh"
 
 #define CORONIUM_VERSION                                                \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
@@ -53,7 +53,7 @@ namespace coronium {
 
 extern char const* cpus_directory; // namespaced global
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class PcodeRaw
  * @brief Used to get raw pcode.
  */
@@ -74,7 +74,7 @@ public:
     void print (std::ostream&);
 };
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class AssemblyRaw
  * @brief Used to get assembly.
  */
@@ -86,7 +86,7 @@ public:
     void dump (const Address& addr, const std::string& mnem, const std::string& body) override;
 };
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class Instruction
  * @brief All content relating to a single instruction.
  */
@@ -98,7 +98,7 @@ struct Instruction {
     {};
 };
 
-/**
+/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class Coronium
  * @brief stores + manages processor information. Friend classes need to reference this to
  *        extract import context and translation info.
@@ -106,6 +106,7 @@ struct Instruction {
 class Coronium {
 private:
     auto setCpuDirectory(std::string dir = "@SLA_LOCATION@") -> void;
+    auto importContexts (ContextDatabase* cdb) -> void;
     friend class Binary;        // files
     friend class BinaryRaw;     // buffers
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
@@ -137,8 +138,6 @@ public:
     auto getArchType() -> std::string { return ldefs["id"]; }
     auto disassemble (Address addr, uint4 ninsns = 1) -> std::vector<Instruction>;
     auto dump (Range rng) -> std::vector<Instruction>;
-private:
-    auto importContexts (ContextDatabase* cdb) -> void;
 };
 
 } // END OF NAMESPACE

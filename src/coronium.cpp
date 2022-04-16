@@ -345,6 +345,7 @@ PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeDat
     pcode.push_back(pcode_stmt);
 }
 
+// --------------------------------------------------------------------------------
 auto
 PcodeRaw::print_varnode (std::ostream& s, VarnodeData& vdata) -> void
 
@@ -362,6 +363,7 @@ PcodeRaw::print_varnode (std::ostream& s, VarnodeData& vdata) -> void
     s << ',' << dec << vdata.size << ')';
 }
 
+// --------------------------------------------------------------------------------
 auto
 PcodeRaw::print (std::ostream& s) -> void
 

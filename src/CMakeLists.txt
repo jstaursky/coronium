@@ -5,7 +5,7 @@ add_library(
   coronium_impl
   OBJECT
   coronium.cpp
-  loadbinary.cpp
+  coroBinary.cpp
 )
 
 if(BUILD_SHARED_LIBS)
