@@ -351,16 +351,21 @@ PcodeRaw::print_varnode (std::ostream& s, VarnodeData& vdata) -> void
 
 {
     const Translate* trans = vdata.space->getTrans ();
+    string spacename = vdata.space->getName ();
 
-    s << '(' << vdata.space->getName() << ',';
+    if (spacename == "unique") {
+        s << '(' << vdata.space->getName()
+          << ',';
+        vdata.space->printOffset (s, vdata.offset);
+        s  << ',' << dec << vdata.size << ')';
+        return;
+    }
 
-    if (vdata.space->getName () == "register") {
+    if (spacename == "register") {
         s << trans->getRegisterName (vdata.space, vdata.offset, vdata.size);
     } else {
         vdata.space->printOffset (s, vdata.offset);
     }
-
-    s << ',' << dec << vdata.size << ')';
 }
 
 // --------------------------------------------------------------------------------
@@ -368,15 +373,32 @@ auto
 PcodeRaw::print (std::ostream& s) -> void
 
 {
-    for (auto stmt : pcode) {
+    for (auto stmt : pcode)
+    {
         if (stmt.hasOutvar) {
             print_varnode (s, stmt.outvar);
             s << " = ";
         }
-        s << get_opname(stmt.opc);
-        for (auto in : stmt.invars) {
-            s << ' ';
-            print_varnode (s, in);
+        string op = get_opname (stmt.opc);
+        s << op << ' ';
+        bool isSpecial = (op == "STORE" || op == "LOAD");
+
+        if (op == "STORE") {
+            s << "ram[";
+            print_varnode (s, stmt.invars[1]); // skip over invar 0.
+            s << "] = ";
+        }
+
+        if (op == "LOAD") {
+            s << "ram[";
+            print_varnode (s, stmt.invars[1]); // skip over invar 0.
+            s << "]";
+        }
+
+        for (auto i = isSpecial ? 2 : 0; i != stmt.invars.size(); ++i) {
+            print_varnode (s, stmt.invars[i]);
+            if (i != stmt.invars.size() - 1)
+                s << ", ";
         }
         s << "\n";
     }
