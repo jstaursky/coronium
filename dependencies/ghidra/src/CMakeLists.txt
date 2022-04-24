@@ -98,6 +98,7 @@ target_sources(
   variable.cc
   varmap.cc
   varnode.cc
+  unionresolve.cc
 )
 
 if(BFD)
