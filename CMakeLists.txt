@@ -29,8 +29,13 @@ configure_file(
   ${CMAKE_SOURCE_DIR}/include/coronium/coronium.hpp.in
   ${CMAKE_BINARY_DIR}/coronium.hpp
 )
-install(FILES "${CMAKE_BINARY_DIR}/coronium.hpp" DESTINATION include/coronium)
-install(FILES "${CMAKE_SOURCE_DIR}/include/coronium/coroBinary.hpp" DESTINATION include/coronium)
+install(
+  FILES
+  "${CMAKE_BINARY_DIR}/coronium.hpp"
+  "${CMAKE_SOURCE_DIR}/include/coronium/binary-image.hpp"
+  "${CMAKE_SOURCE_DIR}/include/coronium/emitters.hpp"
+  DESTINATION include/coronium
+)
 
 find_package(BISON REQUIRED)
 find_package(FLEX REQUIRED)

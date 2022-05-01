@@ -5,7 +5,8 @@ add_library(
   coronium_impl
   OBJECT
   coronium.cpp
-  coroBinary.cpp
+  binary-image.cpp
+  emitters.cpp
 )
 
 if(BUILD_SHARED_LIBS)

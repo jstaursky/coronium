@@ -1,5 +1,5 @@
 /**
- * @file coroBinary.hpp
+ * @file binary-image.hpp
  * Copyright (C) 2022 Joe Staursky
  *
  * @section LICENSE

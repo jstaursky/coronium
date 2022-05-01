@@ -37,14 +37,16 @@
 #include <tuple>
 #include <unordered_map>
 #include <vector>
-/* local */
+/* local (ghidra) */
 #include "address.hh"
 #include "globalcontext.hh"
-#include "coroBinary.hpp"
 #include "loadimage_bfd.hh"
 #include "sleigh.hh"
 #include "translate.hh"
 #include "xml.hh"
+/* local (coronium) */
+#include "binary-image.hpp"
+#include "emitters.hpp"
 
 #define CORONIUM_VERSION                                                \
 	"@PROJECT_VERSION_MAJOR@.@PROJECT_VERSION_MINOR@.@PROJECT_VERSION_PATCH@"
@@ -52,51 +54,6 @@
 namespace coronium {
 
 extern char const* cpus_directory; // namespaced global
-
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * @class PcodeRaw
- * @brief Used to get raw pcode.
- */
-class PcodeRaw : public PcodeEmit {
-private:
-    struct PcodeStatement {
-        PcodeStatement (Address adr, OpCode op) : addr(adr), opc(op) {}
-        Address addr;
-        OpCode opc;
-        std::vector<VarnodeData> invars;
-        VarnodeData outvar;
-        bool hasOutvar = false;
-    };
-    std::vector<PcodeStatement> pcode;
-    void print_varnode (std::ostream&, VarnodeData&);
-public:
-    void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) override;
-    void print (std::ostream&);
-};
-
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * @class AssemblyRaw
- * @brief Used to get assembly.
- */
-class AssemblyRaw : public AssemblyEmit {
-public:
-    Address address;
-    std::string mnemonic;
-    std::string body;
-    void dump (const Address& addr, const std::string& mnem, const std::string& body) override;
-};
-
-/** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- * @class Instruction
- * @brief All content relating to a single instruction.
- */
-struct Instruction {
-    AssemblyRaw assembly;
-    PcodeRaw pcode;
-    int4 size;                  // length of the instruction.
-    Instruction (AssemblyRaw _asm, PcodeRaw _pcode) : assembly (_asm), pcode (_pcode)
-    {};
-};
 
 /** ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  * @class Coronium
@@ -112,6 +69,7 @@ private:
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
     std::string _cpu_dir {""};  // NOTE does not end in '/'
+    std::vector<OpBehavior *> *pcodebehavior = nullptr;
     mutable std::unordered_map<std::string, std::string>
     ldefs {
         {"processor", ""},

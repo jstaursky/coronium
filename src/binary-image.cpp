@@ -1,5 +1,5 @@
 /**
- * @file coroBinary.cpp
+ * @file binary-image.cpp
  * Copyright (C) 2022 Joe Staursky
  *
  * @section LICENSE
@@ -22,7 +22,7 @@
 #include <iostream>
 
 #include "coronium.hpp"
-#include "../include/coronium/coroBinary.hpp"
+#include "../include/coronium/binary-image.hpp"
 
 using namespace coronium;
 
