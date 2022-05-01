@@ -20,6 +20,7 @@
  */
 
 #include "../include/coronium/emitters.hpp"
+#include <cstdlib>
 
 using namespace coronium;
 
@@ -37,24 +38,64 @@ AssemblyRaw::dump (const Address& addr, const string& mnem, const string& body)-
     this->body = body;
 }
 
-/*
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
  *
  * PcodeRaw
  *
  */
+PcodeRaw::PcodeRaw(std::vector<OpBehavior *> &behavior) : pcode_behaviors(behavior)
+
+{}
+
+PcodeRaw::~PcodeRaw()
+
+{
+}
+
+// The "Instruction" type will manage the lifetime of PcodeRaw
+// (i.e., do not put this into the destructor).
+auto
+PcodeRaw::clear_cache (void) -> void
+
+{
+    for (auto &i : pcodeOps) {
+        if (i) {
+            delete i;
+            i = nullptr;
+        }
+    }
+    for (auto &i : vnodes_cache) {
+        if (i) {
+            delete i;
+            i = nullptr;
+        }
+    }
+
+}
+
 auto
 PcodeRaw::dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) -> void
 
 {
-    PcodeStatement pcode_stmt (addr, opc);
-    if (outvar != (VarnodeData*)0) {
-        pcode_stmt.hasOutvar = true;
-        pcode_stmt.outvar = *outvar;
-    }
+    PcodeOpRaw *raw = new PcodeOpRaw();
+
+    raw->setBehavior (pcode_behaviors[opc]);
+    raw->setSeqNum(addr, pcodeOps.size());
+    if (outvar) {
+        auto *out = new VarnodeData();
+        *out = *outvar;
+        vnodes_cache.push_back(out);
+        raw->setOutput(out);
+    } else
+        raw->setOutput(nullptr);
+
     for (auto i = 0; i != isize; ++i) {
-        pcode_stmt.invars.push_back (vars[i]);
+        auto *in = new VarnodeData();
+        *in = vars[i];
+        raw->addInput(in);
+        vnodes_cache.push_back(in);
     }
-    pcode.push_back(pcode_stmt);
+    pcodeOps.push_back(raw);
 }
 
 // --------------------------------------------------------------------------------
@@ -85,33 +126,118 @@ auto
 PcodeRaw::print (std::ostream& s) -> void
 
 {
-    for (auto stmt : pcode)
+    for (auto inst : pcodeOps)
     {
-        if (stmt.hasOutvar) {
-            print_varnode (s, stmt.outvar);
+        VarnodeData* out = inst->getOutput();
+        if (out) {
+            print_varnode (s, *out);
             s << " = ";
         }
-        string op = get_opname (stmt.opc);
+
+        std::string op = get_opname (inst->getOpcode());
         s << op << ' ';
-        bool isSpecial = (op == "STORE" || op == "LOAD");
 
         if (op == "STORE") {
             s << "ram[";
-            print_varnode (s, stmt.invars[1]); // skip over invar 0.
+            print_varnode (s, *inst->getInput(1)); // skip over invar 0.
             s << "] = ";
         }
 
         if (op == "LOAD") {
             s << "ram[";
-            print_varnode (s, stmt.invars[1]); // skip over invar 0.
+            print_varnode (s, *inst->getInput(1)); // skip over invar 0.
             s << "]";
         }
 
-        for (auto i = isSpecial ? 2 : 0; i != stmt.invars.size(); ++i) {
-            print_varnode (s, stmt.invars[i]);
-            if (i != stmt.invars.size() - 1)
+        for (int i = (op == "STORE" || op == "LOAD") ? 2 : 0;
+             i != inst->numInput(); ++i)
+        {
+            print_varnode (s, *inst->getInput(i) );
+            if (i != inst->numInput() - 1)
                 s << ", ";
         }
         s << "\n";
     }
+}
+
+/* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ *
+ * Instruction
+ *
+ */
+Instruction::Instruction (AssemblyRaw assem, PcodeRaw&& rawpc, int4 sz)
+    : pcode (rawpc.pcode_behaviors)
+{
+    size = sz;
+    assembly = assem;
+
+    /* PcodeRaw */
+    pcode.pcodeOps = std::vector<PcodeOpRaw*> (rawpc.pcodeOps.size(), (PcodeOpRaw*)0);
+    for (auto i = 0; i != rawpc.pcodeOps.size(); ++i) {
+        pcode.pcodeOps[i] = rawpc.pcodeOps[i];
+        rawpc.pcodeOps[i] = nullptr;
+    }
+
+    pcode.vnodes_cache = std::vector<VarnodeData*> (rawpc.vnodes_cache.size(), (VarnodeData*)0);
+    for (auto i = 0; i != rawpc.vnodes_cache.size(); ++i) {
+         pcode.vnodes_cache[i] = rawpc.vnodes_cache[i];
+         rawpc.vnodes_cache[i] = nullptr;
+    }
+}
+
+/*
+ * MOVE CONSTRUCTOR
+ */
+Instruction::Instruction (Instruction&& other) noexcept
+    : pcode (other.pcode.pcode_behaviors)
+{
+    size = other.size;
+    assembly = other.assembly;
+
+    /* PcodeRaw */
+    pcode.pcodeOps = std::vector<PcodeOpRaw*> (other.pcode.pcodeOps.size(), (PcodeOpRaw*)0);
+    for (auto i = 0; i != other.pcode.pcodeOps.size(); ++i) {
+        pcode.pcodeOps[i] = other.pcode.pcodeOps[i];
+        other.pcode.pcodeOps[i] = nullptr;
+    }
+    other.pcode.pcodeOps.clear();
+
+    pcode.vnodes_cache = std::vector<VarnodeData*> (other.pcode.vnodes_cache.size(), (VarnodeData*)0);
+    for (auto i = 0; i != other.pcode.vnodes_cache.size(); ++i) {
+        pcode.vnodes_cache[i] = other.pcode.vnodes_cache[i];
+        other.pcode.vnodes_cache[i] = nullptr;
+    }
+    other.pcode.vnodes_cache.clear();
+}
+
+/*
+ * COPY CONSTRUCTOR
+ */
+Instruction::Instruction (Instruction const& other)
+    : pcode (other.pcode.pcode_behaviors)
+{
+    size = other.size;
+    assembly = other.assembly;
+
+    /* PcodeRaw */
+    pcode.pcodeOps = std::vector<PcodeOpRaw*> (other.pcode.pcodeOps.size(), (PcodeOpRaw*)0);
+    for (auto i = 0; i != other.pcode.pcodeOps.size(); ++i) {
+        auto* rawOp = new PcodeOpRaw();
+        *rawOp = *other.pcode.pcodeOps[i];
+        pcode.pcodeOps[i] = rawOp;
+    }
+
+    pcode.vnodes_cache = std::vector<VarnodeData*> (other.pcode.vnodes_cache.size(), (VarnodeData*)0);
+    for (auto i = 0; i != other.pcode.vnodes_cache.size(); ++i) {
+        auto* vn = new VarnodeData();
+        *vn = *other.pcode.vnodes_cache[i];
+        pcode.vnodes_cache[i] = vn;
+    }
+}
+
+
+Instruction::~Instruction()
+
+{
+    pcode.clear_cache();
 }

@@ -66,10 +66,11 @@ private:
     auto importContexts (ContextDatabase* cdb) -> void;
     friend class Binary;        // files
     friend class BinaryRaw;     // buffers
+    friend class PcodeRaw;      // needs 'pcode_behaviors'
     std::string _lang_id {""};  // format: <CPU>:<ENDIANESS>:<BITS>:<MODE>
     std::string _cpu {""};
     std::string _cpu_dir {""};  // NOTE does not end in '/'
-    std::vector<OpBehavior *> *pcodebehavior = nullptr;
+    std::vector<OpBehavior *> pcode_behaviors;
     mutable std::unordered_map<std::string, std::string>
     ldefs {
         {"processor", ""},

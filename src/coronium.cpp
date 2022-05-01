@@ -125,6 +125,7 @@ Coronium::Coronium (std::string id)
             }
         }
     }
+    OpBehavior::registerInstructions(pcode_behaviors, trans);
 }
 
 Coronium::~Coronium()
@@ -136,6 +137,11 @@ Coronium::~Coronium()
         delete trans;
     if (loader)
         delete loader;
+
+    for (auto &i : pcode_behaviors) {
+        delete i;
+        i = nullptr;
+    }
 }
 
 // PRIVATE METHODS ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -150,6 +156,7 @@ Coronium::~Coronium()
  */
 auto
 Coronium::setCpuDirectory (std::string dir) -> void
+
 {
     cpus_directory = new char[dir.length() + 1];
     memcpy((void*)cpus_directory, (void*)dir.c_str(), dir.length() + 1);
@@ -269,17 +276,13 @@ Coronium::disassemble (Address addr, uint4 ninsns) -> std::vector<Instruction>
 
 {
     std::vector<Instruction> result;
-    AssemblyRaw asm_emit;
-    PcodeRaw pcode_emit;
 
-    int4 length;
-    while (result.size() != ninsns)
-    {
-        length    = trans->printAssembly (asm_emit, addr);
-        length    = trans->oneInstruction (pcode_emit, addr);
-        auto insn = Instruction (asm_emit, pcode_emit);
-        insn.size = length;
-        result.push_back(insn);
+    while (result.size() != ninsns) {
+        AssemblyRaw asm_emit;
+        PcodeRaw pcode_emit (this->pcode_behaviors);
+        trans->printAssembly (asm_emit, addr);
+        int4 length = trans->oneInstruction (pcode_emit, addr);
+        result.push_back (std::move (Instruction (asm_emit, std::move(pcode_emit), length)));
         addr = addr + length;
     }
     return result;
@@ -292,20 +295,14 @@ Coronium::dump (Range rng) -> std::vector<Instruction>
 {
     std::vector<Instruction> result;
 
-    AssemblyRaw asm_emit;
-    PcodeRaw pcode_emit;
-
     Address pos = rng.getFirstAddr ();
     Address finish = rng.getLastAddr ();
-
-    int4 length;
-
     while (pos < finish) {
+        AssemblyRaw asm_emit;
+        PcodeRaw pcode_emit (this->pcode_behaviors);
         trans->printAssembly (asm_emit, pos);
-        length = trans->oneInstruction (pcode_emit, pos);
-        auto insn = Instruction (asm_emit, pcode_emit);
-        insn.size = length;
-        result.push_back (insn);
+        int4 length = trans->oneInstruction (pcode_emit, pos);
+        result.push_back (std::move (Instruction (asm_emit, std::move(pcode_emit), length)));
         pos = pos + length;
     }
     return result;

@@ -25,11 +25,13 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include <memory>
 /* local (ghidra) */
 #include "translate.hh"
 #include "pcoderaw.hh"
 #include "address.hh"
 #include "opcodes.hh"
+#include "opbehavior.hh"
 
 namespace coronium {
 
@@ -38,20 +40,18 @@ namespace coronium {
  * @brief Used to get raw pcode.
  */
 class PcodeRaw : public PcodeEmit {
+    friend class Instruction;
 private:
-//    PcodeRaw(std::vector<OpBehavior *> *behavior);
-    struct PcodeStatement {
-        PcodeStatement (Address adr, OpCode op) : addr(adr), opc(op) {}
-        Address addr;
-        OpCode opc;
-        std::vector<VarnodeData> invars;
-        VarnodeData outvar;
-        bool hasOutvar = false;
-    };
-    std::vector<PcodeStatement> pcode;
     void print_varnode (std::ostream&, VarnodeData&);
+    // ----------------------------------------
+    std::vector<PcodeOpRaw*> pcodeOps;
+    vector<VarnodeData*> vnodes_cache;
+    std::vector<OpBehavior*>& pcode_behaviors;
 public:
-    PcodeRaw() = default;
+    PcodeRaw (std::vector<OpBehavior*>& behavior);
+    PcodeRaw (PcodeRaw const& other) = default;
+    ~PcodeRaw();
+    void clear_cache (void);
     void dump (const Address& addr, OpCode opc, VarnodeData* outvar, VarnodeData* vars, int4 isize) override;
     void print (std::ostream&);
 };
@@ -72,12 +72,15 @@ public:
  * @class Instruction
  * @brief All content relating to a single instruction.
  */
-struct Instruction {
+struct Instruction
+{
     AssemblyRaw assembly;
     PcodeRaw pcode;
-    int4 size;                  // length of the instruction.
-    Instruction (AssemblyRaw _asm, PcodeRaw _pcode) : assembly (_asm), pcode (_pcode)
-    {};
+    int4 size;
+    Instruction (AssemblyRaw assem, PcodeRaw&& rawpc, int4 sz);
+    Instruction (Instruction const& other);
+    Instruction (Instruction&& other) noexcept;
+    ~Instruction();
 };
 
 }
